@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
-public class Graph : MonoBehaviour
+public class Graph
 {
     private List<Node> nodes;
     private List<Edge> edges;
 
-    public Graph(){
+    public List<Node> Nodes => nodes;
+    public List<Edge> Edges => edges;
+
+    public Graph()
+    {
 
         nodes = new List<Node>();
         edges = new List<Edge>();
@@ -22,6 +27,39 @@ public class Graph : MonoBehaviour
     public void AddEdge(Node from, Node to){
 
         edges.Add(new Edge(from, to, 1));
+    }
+
+    public bool Adjacent(Node from, Node to)
+    {
+        foreach (Edge e in edges)
+        {
+            if (e.from == from && e.to == to)
+                return true;
+        }
+        return false;
+    }
+
+    public List<Node> Neighbors(Node from)
+    {
+        List<Node> result = new List<Node>();
+
+        foreach (Edge e in edges)
+        {
+            if (e.from == from)
+                result.Add(e.to);
+        }
+        return result;
+    }
+
+    public float Distance(Node from, Node to)
+    {
+        foreach (Edge e in edges)
+        {
+            if (e.from == from && e.to == to)
+                return e.GetWeight();
+        }
+
+        return Mathf.Infinity;
     }
 
 }
