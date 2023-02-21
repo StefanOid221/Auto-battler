@@ -4,16 +4,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GridManager : MonoBehaviour
+public class GridManager : Manager<GridManager>
 {
 
     public Tilemap grid;
 
     Graph graph;
+    protected Dictionary<Team, int> startPositionPerTeam;
+
+    public Node GetFreeNode(Team forTeam)
+    {
+        int startIndex = startPositionPerTeam[forTeam];
+        int currentIndex = startIndex;
+
+        while (graph.Nodes[currentIndex].IsOccupied)
+        {
+            if (startIndex == 0)
+            {
+                currentIndex++;
+                if (currentIndex == graph.Nodes.Count)
+                    return null;
+            }
+            else
+            {
+                currentIndex--;
+                if (currentIndex == -1)
+                    return null;
+            }
+
+        }
+        return graph.Nodes[currentIndex];
+    } 
 
     private void Awake()
     {
+        base.Awake();
         InitializeGraph();
+        startPositionPerTeam = new Dictionary<Team, int>();
+        startPositionPerTeam.Add(Team.Team1, 0);
+        startPositionPerTeam.Add(Team.Team2, graph.Nodes.Count - 1);
     }
 
     private void InitializeGraph()
