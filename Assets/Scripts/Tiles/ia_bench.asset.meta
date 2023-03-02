@@ -1,10 +1,8 @@
 fileFormatVersion: 2
-guid: 0f7be247a798aed4e8f4f4b80d53e196
-labels:
-- Ground
+guid: 23dd2b107d9baac40bfdc9c03e608c1e
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000
   userData: 
-  assetBundleName: player_board
+  assetBundleName: 
   assetBundleVariant: 

@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public enum tile_type
+{
+    player_board,
+    ia_board,
+    player_bench,
+    ia_bench
+
+}
 public class Graph
 {
     private List<Node> nodes;
@@ -19,9 +27,9 @@ public class Graph
 
     }
 
-    public void AddNode(Vector3 worldPosition){
+    public void AddNode(Vector3 worldPosition,tile_type type){
 
-        nodes.Add(new Node(nodes.Count, worldPosition));
+        nodes.Add(new Node(nodes.Count, worldPosition,type));
     }
 
     public void AddEdge(Node from, Node to){
@@ -67,10 +75,11 @@ public class Graph
 
         public int index;
         public Vector3 worldPosition;
+        public tile_type tile_type;
 
         private bool occupied = false;
 
-        public Node(int index, Vector3 worldPosition){
+        public Node(int index, Vector3 worldPosition,tile_type type){
 
             this.index = index;
             this.worldPosition = worldPosition;

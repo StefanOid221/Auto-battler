@@ -17,8 +17,14 @@ public class GridManager : Manager<GridManager>
         int startIndex = startPositionPerTeam[forTeam];
         int currentIndex = startIndex;
 
-        while (graph.Nodes[currentIndex].IsOccupied)
+        tile_type type;
+        if (forTeam is Team.Team1)
+            type = tile_type.player_board;
+        else type = tile_type.ia_board;
+
+        while (graph.Nodes[currentIndex].IsOccupied || graph.Nodes[currentIndex].tile_type != type)
         {
+           
             if (startIndex == 0)
             {
                 currentIndex++;
@@ -31,12 +37,12 @@ public class GridManager : Manager<GridManager>
                 if (currentIndex == -1)
                     return null;
             }
-
         }
+        Debug.Log(graph.Nodes[currentIndex].worldPosition);
         return graph.Nodes[currentIndex];
-    } 
+    }
 
-    private void Awake()
+    private new void Awake()
     {
         base.Awake();
         InitializeGraph();
@@ -48,7 +54,6 @@ public class GridManager : Manager<GridManager>
     private void InitializeGraph()
     {
         graph = new Graph();
-        Debug.Log("se crea el grafo");
         for(int x = grid.cellBounds.xMin; x < grid.cellBounds.xMax; x++)
         {
             for(int y = grid.cellBounds.yMin; y < grid.cellBounds.yMax; y++)
@@ -57,7 +62,15 @@ public class GridManager : Manager<GridManager>
                 if (grid.HasTile(localPosition))
                 {
                     Vector3 worldPosition = grid.CellToWorld(localPosition);
-                    graph.AddNode(worldPosition);
+                    tile_type type;
+                    if (grid.GetColor(localPosition) == Color.red)
+                        type = tile_type.ia_board;
+                    else if (grid.GetColor(localPosition) == Color.green)
+                        type = tile_type.player_board;
+                    else if (grid.GetColor(localPosition) == Color.yellow)
+                        type = tile_type.player_bench;
+                    else type = tile_type.ia_bench;
+                    graph.AddNode(worldPosition,type);
                 }
             }
         }
@@ -66,7 +79,6 @@ public class GridManager : Manager<GridManager>
 
         foreach(Node from in allNodes)
         {
-            Debug.Log(from.worldPosition);
             foreach(Node to in allNodes)
             {
                 if(Vector3.Distance(from.worldPosition, to.worldPosition) <= 1f && from != to)
