@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Manager<GameManager>
 {
 
     public List<BaseUnit> allUnitsPrefab;
 
     Dictionary<Team, List<BaseUnit>> unitsByTeam = new Dictionary<Team, List<BaseUnit>>();
 
-    int unitsPerTeam = 1;
+    
+
+    int unitsPerTeam = 4;
 
     private void Start()
     {
@@ -18,6 +20,12 @@ public class GameManager : MonoBehaviour
         InstantiateUnits();
     }
 
+    public List<BaseUnit> GetUnitsAgainst(Team otherTeam)
+    {
+        if (otherTeam == Team.Team1)
+            return unitsByTeam[Team.Team2];
+        else return unitsByTeam[Team.Team1];
+    }
     private void InstantiateUnits()
     {
         unitsByTeam.Add(Team.Team1, new List<BaseUnit>());
@@ -42,7 +50,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UnitDead(BaseUnit unit)
+    {
+        unitsByTeam[unit.myTeam].Remove(unit);
 
+        Destroy(unit.gameObject);
+    }
 
 }
 

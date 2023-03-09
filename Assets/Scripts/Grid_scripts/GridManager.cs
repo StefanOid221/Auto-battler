@@ -22,7 +22,7 @@ public class GridManager : Manager<GridManager>
             type = tile_type.player_board;
         else type = tile_type.ia_board;
 
-        while (graph.Nodes[currentIndex].IsOccupied || graph.Nodes[currentIndex].tile_type != type)
+        while (graph.Nodes[currentIndex].IsOccupied)
         {
            
             if (startIndex == 0)
@@ -38,8 +38,17 @@ public class GridManager : Manager<GridManager>
                     return null;
             }
         }
-        Debug.Log(graph.Nodes[currentIndex].worldPosition);
         return graph.Nodes[currentIndex];
+    }
+
+    public List<Node> GetNodesCloseTo(Node to)
+    {
+        return graph.Neighbors(to);
+    }
+
+    public List<Node> GetPath(Node from, Node to)
+    {
+        return graph.GetShortestPath(from, to);
     }
 
     private new void Awake()
@@ -53,6 +62,7 @@ public class GridManager : Manager<GridManager>
 
     private void InitializeGraph()
     {
+
         graph = new Graph();
         for(int x = grid.cellBounds.xMin; x < grid.cellBounds.xMax; x++)
         {
@@ -62,14 +72,11 @@ public class GridManager : Manager<GridManager>
                 if (grid.HasTile(localPosition))
                 {
                     Vector3 worldPosition = grid.CellToWorld(localPosition);
+                    Debug.Log(localPosition.x);
                     tile_type type;
                     if (grid.GetColor(localPosition) == Color.red)
                         type = tile_type.ia_board;
-                    else if (grid.GetColor(localPosition) == Color.green)
-                        type = tile_type.player_board;
-                    else if (grid.GetColor(localPosition) == Color.yellow)
-                        type = tile_type.player_bench;
-                    else type = tile_type.ia_bench;
+                    else type = tile_type.player_board;
                     graph.AddNode(worldPosition,type);
                 }
             }
@@ -88,6 +95,9 @@ public class GridManager : Manager<GridManager>
             }
         }
     }
+
+    public int fromIndex = 0;
+    public int toIndex = 0;
 
     private void OnDrawGizmos()
     {
@@ -114,16 +124,16 @@ public class GridManager : Manager<GridManager>
 
         }
 
-        //if (fromIndex >= allNodes.Count || toIndex >= allNodes.Count)
-        //    return;
+        if (fromIndex >= allNodes.Count || toIndex >= allNodes.Count)
+            return;
 
-        //List<Node> path = graph.GetShortestPath(allNodes[fromIndex], allNodes[toIndex]);
-        //if (path.Count > 1)
-        //{
-        //    for (int i = 1; i < path.Count; i++)
-        //    {
-        //        Debug.DrawLine(path[i - 1].worldPosition, path[i].worldPosition, Color.red, 10);
-        //    }
-        //}
+        List<Node> path = graph.GetShortestPath(allNodes[fromIndex], allNodes[toIndex]);
+        if (path.Count > 1)
+        {
+            for (int i = 1; i < path.Count; i++)
+            {
+                Debug.DrawLine(path[i - 1].worldPosition, path[i].worldPosition, Color.blue, 10);
+            }
+        }
     }
 }

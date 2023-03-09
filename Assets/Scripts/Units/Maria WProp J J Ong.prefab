@@ -996,7 +996,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2900845275400778167}
   - component: {fileID: 9124842309242842061}
-  - component: {fileID: 745992071365988615}
+  - component: {fileID: -2862685416444693063}
   m_Layer: 0
   m_Name: Maria WProp J J Ong
   m_TagString: Untagged
@@ -1042,7 +1042,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &745992071365988615
+--- !u!114 &-2862685416444693063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1051,16 +1051,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 2524847875684461325}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 153ddb75b2d110a4998413956b02c14e, type: 3}
+  m_Script: {fileID: 11500000, guid: d0f1ef1497e32f14d9911b20e18da919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gameObject: {fileID: 2524847875684461325}
   animator: {fileID: 0}
+  barPrefab: {fileID: 3402602698459576057, guid: c4b6d66b42b3bc447a56349a2ebf55d2, type: 3}
   baseDamage: 1
   baseHealth: 3
   range: 1
   attackSpeed: 1
   movementSpeed: 1
+  moving: 0
+  myTeam: 0
 --- !u!1 &3059170885200313980
 GameObject:
   m_ObjectHideFlags: 0
