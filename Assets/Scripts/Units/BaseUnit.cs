@@ -6,7 +6,7 @@ using System.Linq;
 public class BaseUnit : MonoBehaviour
 {
     public GameObject gameObject;
-    public Animator animator;
+    //public Animator animator;
     protected HealthBar healthbar;
     public HealthBar barPrefab;
 
@@ -116,7 +116,7 @@ public class BaseUnit : MonoBehaviour
         if (!canAttack)
             return;
 
-        animator.SetTrigger("attack");
+        //animator.SetTrigger("attack");
 
         waitBetweenAttack = 1 / attackSpeed;
         StartCoroutine(WaitCoroutine());
@@ -126,7 +126,7 @@ public class BaseUnit : MonoBehaviour
     {
         canAttack = false;
         yield return null;
-        animator.ResetTrigger("attack");
+        //animator.ResetTrigger("attack");
         yield return new WaitForSeconds(waitBetweenAttack);
         canAttack = true;
     }
