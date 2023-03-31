@@ -72,7 +72,6 @@ public class GridManager : Manager<GridManager>
                 if (grid.HasTile(localPosition))
                 {
                     Vector3 worldPosition = grid.CellToWorld(localPosition);
-                    Debug.Log(localPosition.x);
                     tile_type type;
                     if (grid.GetColor(localPosition) == Color.red)
                         type = tile_type.ia_board;
