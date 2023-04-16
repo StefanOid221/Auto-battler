@@ -50,7 +50,8 @@ public class GameManager : Manager<GameManager>
 
     public void UnitDead(BaseUnit unit)
     {
-        unitsByTeam[unit.myTeam].Remove(unit);
+        team1Entities.Remove(unit);
+        team2Entities.Remove(unit);
 
         Destroy(unit.gameObject);
     }

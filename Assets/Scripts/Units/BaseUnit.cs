@@ -23,6 +23,8 @@ public class BaseUnit : MonoBehaviour
     public Team myTeam;
     protected Node currentNode;
     protected BaseUnit currentTarget;
+
+    public Node CurrentNode => currentNode;
     protected bool inRange => currentTarget != null && Vector3.Distance(this.transform.position, currentTarget.transform.position) <= range;
 
     protected bool hasEnemy => currentTarget != null;
@@ -129,6 +131,11 @@ public class BaseUnit : MonoBehaviour
         //animator.ResetTrigger("attack");
         yield return new WaitForSeconds(waitBetweenAttack);
         canAttack = true;
+    }
+
+    public void SetCurrentNode(Node node)
+    {
+        currentNode = node;
     }
 
 

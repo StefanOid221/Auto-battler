@@ -1,16 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class GridManager : Manager<GridManager>
 {
 
-    public Tilemap grid;
+    public GameObject terrainGrid;
 
     Graph graph;
     protected Dictionary<Team, int> startPositionPerTeam;
+
+    List<Tile> allTiles = new List<Tile>();
+
 
     public Node GetFreeNode(Team forTeam)
     {
@@ -51,9 +55,25 @@ public class GridManager : Manager<GridManager>
         return graph.GetShortestPath(from, to);
     }
 
-    private new void Awake()
+    public Node GetNodeForTile(Tile t)
     {
+        var allNodes = graph.Nodes;
+
+        for (int i = 0; i < allNodes.Count; i++)
+        {
+            if (t.transform.GetSiblingIndex() == allNodes[i].index)
+            {
+                return allNodes[i];
+            }
+        }
+
+        return null;
+    }
+
+    private new void Awake()
+    {        
         base.Awake();
+        allTiles = terrainGrid.GetComponentsInChildren<Tile>().ToList();
         InitializeGraph();
         startPositionPerTeam = new Dictionary<Team, int>();
         startPositionPerTeam.Add(Team.Team1, 0);
@@ -64,21 +84,12 @@ public class GridManager : Manager<GridManager>
     {
 
         graph = new Graph();
-        for(int x = grid.cellBounds.xMin; x < grid.cellBounds.xMax; x++)
+
+        for (int i = 0; i < allTiles.Count; i++)
         {
-            for(int y = grid.cellBounds.yMin; y < grid.cellBounds.yMax; y++)
-            {
-                Vector3Int localPosition = new Vector3Int(x, y, 0);
-                if (grid.HasTile(localPosition))
-                {
-                    Vector3 worldPosition = grid.CellToWorld(localPosition);
-                    tile_type type;
-                    if (grid.GetColor(localPosition) == Color.red)
-                        type = tile_type.ia_board;
-                    else type = tile_type.player_board;
-                    graph.AddNode(worldPosition,type);
-                }
-            }
+            
+            Vector3 place = allTiles[i].transform.position;
+            graph.AddNode(place);
         }
 
         var allNodes = graph.Nodes;
@@ -87,7 +98,7 @@ public class GridManager : Manager<GridManager>
         {
             foreach(Node to in allNodes)
             {
-                if(Vector3.Distance(from.worldPosition, to.worldPosition) <= 1f && from != to)
+                if(Vector3.Distance(from.worldPosition, to.worldPosition) <= 1.3f && from != to)
                 {
                     graph.AddEdge(from, to);
                 }

@@ -27,10 +27,10 @@ public class Graph
 
     }
 
-    public void AddNode(Vector3 worldPosition, tile_type type)
+    public void AddNode(Vector3 worldPosition)
     {
 
-        nodes.Add(new Node(nodes.Count, worldPosition, type));
+        nodes.Add(new Node(nodes.Count, worldPosition));
     }
 
     public void AddEdge(Node from, Node to)
@@ -152,11 +152,11 @@ public class Graph
 
         public int index;
         public Vector3 worldPosition;
-        public tile_type tile_type;
+        
 
         private bool occupied = false;
 
-        public Node(int index, Vector3 worldPosition, tile_type type)
+        public Node(int index, Vector3 worldPosition)
         {
 
             this.index = index;
