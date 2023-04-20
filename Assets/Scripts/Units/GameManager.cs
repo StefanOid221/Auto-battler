@@ -45,7 +45,8 @@ public class GameManager : Manager<GameManager>
         newEntity.gameObject.name = entityData.name;
         team1Entities.Add(newEntity);
 
-        newEntity.Setup(Team.Team1, GridManager.Instance.GetFreeNode(Team.Team1));
+        newEntity.Setup(Team.Team1, GridManager.Instance.GetFreeShopNode(Team.Team1));
+        PlayerData.Instance.benchUnits.Add(newEntity);
     }
 
     public void UnitDead(BaseUnit unit)

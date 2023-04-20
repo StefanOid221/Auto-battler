@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8534926583894089901}
   - component: {fileID: 3820107381542920110}
-  - component: {fileID: 8217161798777680504}
   m_Layer: 0
   m_Name: Hightlight
   m_TagString: Untagged
@@ -85,19 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!65 &8217161798777680504
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 685270021815128244}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.9599999, y: 0.9600002, z: 0.20000005}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7069705522007973828
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +95,8 @@ GameObject:
   - component: {fileID: 7497529776919456243}
   - component: {fileID: 4698568988499940676}
   - component: {fileID: -6925407272718043065}
-  - component: {fileID: -6569844940265849170}
+  - component: {fileID: 2096531744275260735}
+  - component: {fileID: 2084975170599696583}
   m_Layer: 0
   m_Name: BoardTile 1
   m_TagString: Untagged
@@ -200,8 +187,47 @@ MonoBehaviour:
   highlightSprite: {fileID: 3820107381542920110}
   validColor: {r: 0, g: 0.17740631, b: 1, a: 1}
   wrongColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!65 &-6569844940265849170
-BoxCollider:
+  elevation: 0
+--- !u!1839735485 &2096531744275260735
+Tilemap:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069705522007973828}
+  m_Enabled: 1
+  m_Tiles: {}
+  m_AnimatedTiles: {}
+  m_TileAssetArray: []
+  m_TileSpriteArray: []
+  m_TileMatrixArray: []
+  m_TileColorArray: []
+  m_TileObjectToInstantiateArray: []
+  m_AnimationFrameRate: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Origin: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0, y: 0, z: 1}
+  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
+  m_TileOrientation: 0
+  m_TileOrientationMatrix:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+--- !u!135 &2084975170599696583
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -211,5 +237,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.96, y: 0.9600002, z: 0.20000005}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.4800001
+  m_Center: {x: 0, y: 0, z: 0.28}

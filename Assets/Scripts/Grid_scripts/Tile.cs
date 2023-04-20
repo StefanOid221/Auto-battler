@@ -8,6 +8,9 @@ public class Tile : MonoBehaviour
     public Color validColor;
     public Color wrongColor;
 
+    public Team team;
+    public bool isBench;
+
     public void SetHighlight(bool active, bool valid)
     {
         highlightSprite.gameObject.SetActive(active);

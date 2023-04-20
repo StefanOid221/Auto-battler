@@ -9,12 +9,13 @@ public class Draggable : MonoBehaviour
     public Vector3 dragOffset = new Vector3(0, -0.4f, 0);
 
     private Camera cam;
-    
+
     private Renderer Renderer;
 
     private Vector3 oldPosition;
     private int oldSortingOrder;
     private Tile previousTile = null;
+    private Tile actualTile = null;
 
     public bool IsDragging = false;
 
@@ -26,33 +27,19 @@ public class Draggable : MonoBehaviour
 
     public void OnStartDrag()
     {
-        
 
         oldPosition = this.transform.position;
         oldSortingOrder = Renderer.sortingOrder;
 
         Renderer.sortingOrder = 20;
         IsDragging = true;
+        previousTile = actualTile;
     }
 
     public void OnDragging()
     {
         if (!IsDragging)
             return;
-
-        //Debug.Log(this.name + " dragging");
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, releaseMask))
-        { 
-            Vector3 newPosition = hit.point;
-            newPosition.z = 0;
-            this.transform.position = newPosition;
-
-        }
-        // Vector3 newPosition = cam.ScreenToWorldPoint(Input.mousePosition);
-
-        
 
         Tile tileUnder = GetTileUnder();
         if (tileUnder != null)
@@ -65,8 +52,13 @@ public class Draggable : MonoBehaviour
                 previousTile.SetHighlight(false, false);
             }
 
-            previousTile = tileUnder;
+            //previousTile = tileUnder;
+            Vector3 newPosition = tileUnder.transform.position;
+            this.transform.position = newPosition;
+            actualTile = tileUnder;
+
         }
+        
     }
 
     public void OnEndDrag()
@@ -74,12 +66,13 @@ public class Draggable : MonoBehaviour
         if (!IsDragging)
             return;
 
-        
+
 
         if (!TryRelease())
         {
             //Nothing was found, return to original position.
             this.transform.position = oldPosition;
+            actualTile = null;
         }
 
         if (previousTile != null)
@@ -96,21 +89,32 @@ public class Draggable : MonoBehaviour
     private bool TryRelease()
     {
         //Released over something!
-        Tile t = GetTileUnder();
-        if (t != null)
+        
+        if (actualTile != null)
         {
             //It's a tile!
             BaseUnit thisEntity = GetComponent<BaseUnit>();
-            Node candidateNode = GridManager.Instance.GetNodeForTile(t);
+            Node candidateNode = GridManager.Instance.GetNodeForTile(actualTile);
             if (candidateNode != null && thisEntity != null)
             {
-                if (!candidateNode.IsOccupied)
+                if (!candidateNode.IsOccupied && actualTile.team == previousTile.team)
                 {
                     //Let's move this unity to that node
                     thisEntity.CurrentNode.SetOccupied(false);
                     thisEntity.SetCurrentNode(candidateNode);
                     candidateNode.SetOccupied(true);
                     thisEntity.transform.position = candidateNode.worldPosition;
+
+                    if (previousTile.isBench)
+                    {
+                        PlayerData.Instance.removeAtTile(candidateNode);
+                    }
+                    if (actualTile.isBench)
+                    {
+                        PlayerData.Instance.benchUnits.Add(thisEntity);
+                        
+                    }
+                    previousTile = actualTile;
 
                     return true;
                 }
@@ -129,17 +133,15 @@ public class Draggable : MonoBehaviour
         {
             // Get the exact point on the board where the ray intersects
             Vector3 pointOnBoard = hit.point;
-            Debug.Log(pointOnBoard);
 
             // Find the tile that contains the point
             Tile[] tiles = FindObjectsOfType<Tile>();
             foreach (Tile tile in tiles)
             {
                 Collider tileCollider = tile.GetComponent<Collider>();
-                
                 if (tileCollider.bounds.Contains(pointOnBoard))
                 {
-                   
+
                     return tile;
                 }
             }

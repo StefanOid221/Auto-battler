@@ -7,6 +7,7 @@ public class PlayerData : Manager<PlayerData>
     public int Money { get; private set; }
 
     public System.Action OnUpdate;
+    public List<BaseUnit> benchUnits = new List<BaseUnit>();
 
     private void Start()
     {
@@ -23,4 +24,17 @@ public class PlayerData : Manager<PlayerData>
         Money -= amount;
         OnUpdate?.Invoke();
     }
+
+    public void removeAtTile(Node node)
+    {
+        foreach(BaseUnit unit in benchUnits)
+        {
+            if (unit.CurrentNode == node) {
+                benchUnits.Remove(unit);
+                Debug.Log(benchUnits.Count);
+            }
+               
+        }
+    }    
+    
 }

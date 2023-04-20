@@ -18,31 +18,34 @@ public class GridManager : Manager<GridManager>
 
     public Node GetFreeNode(Team forTeam)
     {
-        int startIndex = startPositionPerTeam[forTeam];
-        int currentIndex = startIndex;
+        Tile[] tiles = FindObjectsOfType<Tile>();
 
-        tile_type type;
-        if (forTeam is Team.Team1)
-            type = tile_type.player_board;
-        else type = tile_type.ia_board;
-
-        while (graph.Nodes[currentIndex].IsOccupied)
+        foreach (Tile tile in tiles)
         {
-           
-            if (startIndex == 0)
+            if (!tile.isBench && tile.team == forTeam)
             {
-                currentIndex++;
-                if (currentIndex == graph.Nodes.Count)
-                    return null;
-            }
-            else
-            {
-                currentIndex--;
-                if (currentIndex == -1)
-                    return null;
+                Node node = GetNodeForTile(tile);
+                if (!node.IsOccupied)
+                    return node;
             }
         }
-        return graph.Nodes[currentIndex];
+        return null;
+    }
+
+    public Node GetFreeShopNode(Team forTeam)
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+
+        foreach(Tile tile in tiles)
+        {
+            if (tile.isBench && tile.team == forTeam)
+            {
+                Node node = GetNodeForTile(tile);
+                if (!node.IsOccupied)
+                    return node;
+            }
+        }
+        return null;
     }
 
     public List<Node> GetNodesCloseTo(Node to)
