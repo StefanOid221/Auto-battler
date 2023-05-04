@@ -18,11 +18,16 @@ public class Draggable : MonoBehaviour
     private Tile actualTile = null;
 
     public bool IsDragging = false;
+    
 
     private void Start()
     {
         cam = Camera.main;
         Renderer = GetComponent<Renderer>();
+        BaseUnit thisUnit = GetComponent<BaseUnit>();
+        actualTile = GridManager.Instance.GetTileForNode(thisUnit.CurrentNode);
+        previousTile = actualTile;
+
     }
 
     public void OnStartDrag()
@@ -30,14 +35,15 @@ public class Draggable : MonoBehaviour
 
         oldPosition = this.transform.position;
         oldSortingOrder = Renderer.sortingOrder;
-
+        previousTile = actualTile;
         Renderer.sortingOrder = 20;
         IsDragging = true;
-        previousTile = actualTile;
+        Debug.Log("1");
     }
 
     public void OnDragging()
     {
+        //Debug.Log("2");
         if (!IsDragging)
             return;
 
@@ -52,7 +58,7 @@ public class Draggable : MonoBehaviour
                 previousTile.SetHighlight(false, false);
             }
 
-            //previousTile = tileUnder;
+            
             Vector3 newPosition = tileUnder.transform.position;
             this.transform.position = newPosition;
             actualTile = tileUnder;
@@ -72,7 +78,7 @@ public class Draggable : MonoBehaviour
         {
             //Nothing was found, return to original position.
             this.transform.position = oldPosition;
-            actualTile = null;
+            actualTile = previousTile;
         }
 
         if (previousTile != null)
@@ -87,41 +93,54 @@ public class Draggable : MonoBehaviour
     }
 
     private bool TryRelease()
-    {
-        //Released over something!
-        
+    {      
         if (actualTile != null)
         {
-            //It's a tile!
-            BaseUnit thisEntity = GetComponent<BaseUnit>();
+            BaseUnit thisUnit = GetComponent<BaseUnit>();
             Node candidateNode = GridManager.Instance.GetNodeForTile(actualTile);
-            if (candidateNode != null && thisEntity != null)
+            if (candidateNode != null && thisUnit != null)  
             {
+                Debug.Log("3");
+                Debug.Log(thisUnit);
                 if (!candidateNode.IsOccupied && actualTile.team == previousTile.team)
                 {
-                    //Let's move this unity to that node
-                    thisEntity.CurrentNode.SetOccupied(false);
-                    thisEntity.SetCurrentNode(candidateNode);
-                    candidateNode.SetOccupied(true);
-                    thisEntity.transform.position = candidateNode.worldPosition;
-
-                    if (previousTile.isBench)
+                    Debug.Log("5");
+                    if (previousTile.isBench && !actualTile.isBench)
                     {
-                        PlayerData.Instance.removeAtTile(candidateNode);
-                    }
-                    if (actualTile.isBench)
+                        if (GameManager.Instance.team1BoardhUnits.Count < PlayerData.Instance.level)
+                        {
+                            Debug.Log("5.1");
+                            GameManager.Instance.removeAtTile(candidateNode);
+                            thisUnit.isBenched = false;
+                            GameManager.Instance.team1BoardhUnits.Add(thisUnit);
+                            moveUnit(thisUnit, candidateNode);
+                            return true;
+                        }
+                        else return false;
+                    } 
+                    else if (actualTile.isBench && !previousTile.isBench)
                     {
-                        PlayerData.Instance.benchUnits.Add(thisEntity);
-                        
+                        Debug.Log("5.2");
+                        GameManager.Instance.team1BenchUnits.Add(thisUnit);
+                        thisUnit.isBenched = true;
+                        GameManager.Instance.team1BoardhUnits.Remove(thisUnit);
+                        moveUnit(thisUnit, candidateNode);
+                        return true;
                     }
+                    if (actualTile.isBench && previousTile.isBench)
+                    {
+                        Debug.Log("5.3");
+                        moveUnit(thisUnit, candidateNode);
+                        return true;
+                    }
+                    else if (!actualTile.isBench && !previousTile.isBench)
+                        moveUnit(thisUnit, candidateNode);
+                    Debug.Log("5.4");
                     previousTile = actualTile;
-
                     return true;
                 }
             }
         }
-
-
         return false;
     }
 
@@ -148,6 +167,13 @@ public class Draggable : MonoBehaviour
         }
 
         return null;
+    }
+    public void moveUnit(BaseUnit unit, Node node)
+    {
+        unit.CurrentNode.SetOccupied(false);
+        unit.SetCurrentNode(node);
+        node.SetOccupied(true);
+        unit.transform.position = node.worldPosition;
     }
 
 

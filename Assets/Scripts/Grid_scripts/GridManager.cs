@@ -73,6 +73,21 @@ public class GridManager : Manager<GridManager>
         return null;
     }
 
+    public Tile GetTileForNode(Node n)
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+
+        foreach (Tile tile in tiles)
+        {
+            if (n == GetNodeForTile(tile))
+            {
+                return tile;
+            }
+        }
+
+        return null;
+    }
+
     private new void Awake()
     {        
         base.Awake();

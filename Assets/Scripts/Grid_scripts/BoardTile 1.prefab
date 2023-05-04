@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4698568988499940676}
   - component: {fileID: -6925407272718043065}
   - component: {fileID: 2096531744275260735}
-  - component: {fileID: 2084975170599696583}
+  - component: {fileID: 7326751808485654065}
   m_Layer: 0
   m_Name: BoardTile 1
   m_TagString: Untagged
@@ -112,7 +112,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7069705522007973828}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -187,7 +187,8 @@ MonoBehaviour:
   highlightSprite: {fileID: 3820107381542920110}
   validColor: {r: 0, g: 0.17740631, b: 1, a: 1}
   wrongColor: {r: 1, g: 0, b: 0, a: 1}
-  elevation: 0
+  team: 0
+  isBench: 0
 --- !u!1839735485 &2096531744275260735
 Tilemap:
   m_ObjectHideFlags: 0
@@ -226,8 +227,8 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!135 &2084975170599696583
-SphereCollider:
+--- !u!65 &7326751808485654065
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -237,5 +238,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4800001
-  m_Center: {x: 0, y: 0, z: 0.28}
+  m_Size: {x: 0.77, y: 0.68, z: 0.1}
+  m_Center: {x: 0, y: 0, z: -0.05}

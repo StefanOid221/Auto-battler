@@ -7,9 +7,12 @@ public class UIShop : MonoBehaviour
 {
     public List<UICard> allCards;
     public Text money;
+    public Text level;
+    public Text exp;
 
     private UnitDatabaseSO cachedDb;
     private int refreshCost = 1;
+    private int levelUpCost = 2;
 
     private void Start()
     {
@@ -31,7 +34,7 @@ public class UIShop : MonoBehaviour
 
     public void OnCardClick(UICard card, UnitDatabaseSO.UnitData cardData)
     {
-        if (PlayerData.Instance.CanAfford(cardData.cost) && PlayerData.Instance.benchUnits.Count < 7)
+        if (PlayerData.Instance.CanAfford(cardData.cost) && GameManager.Instance.team1BenchUnits.Count < 7)
         {
             PlayerData.Instance.SpendMoney(cardData.cost);
             card.gameObject.SetActive(false);
@@ -49,8 +52,21 @@ public class UIShop : MonoBehaviour
         }
     }
 
+    public void OnLevelUpClick()
+    {
+        //Decrease money 
+        if (PlayerData.Instance.CanAfford(levelUpCost))
+        {
+            PlayerData.Instance.SpendMoney(levelUpCost);
+            PlayerData.Instance.UpdateExp();
+            
+        }
+    }
     void Refresh()
     {
-        money.text = PlayerData.Instance.Money.ToString();
+
+        money.text = "Money " + PlayerData.Instance.Money.ToString();
+        level.text = "Level " + PlayerData.Instance.level.ToString();
+        exp.text = "Exp " + PlayerData.Instance.exp.ToString() + "/" + PlayerData.Instance.expNeeded.ToString();
     }
 }

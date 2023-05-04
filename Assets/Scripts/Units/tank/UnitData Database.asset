@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b8a55c33bada64ebd10993ae6ca369, type: 3}
+  m_Name: UnitData Database
+  m_EditorClassIdentifier: 
+  allUnits:
+  - prefab: {fileID: -2862685416444693063, guid: a16b6a73ad077b44890ae311ffa9e101, type: 3}
+    name: Warrior
+    cost: 5
+  - prefab: {fileID: 4005668234819472363, guid: 361216fadca8400468675f8de5b7b575, type: 3}
+    name: Tank
+    cost: 8
+  - prefab: {fileID: 3720721156074327002, guid: c7e2729cf7cbe864b9e7344b22d8cd82, type: 3}
+    name: Ranger
+    cost: 6
+  - prefab: {fileID: 8759000654179567461, guid: 551a4ad882e63d54bb214a082e3d9c67, type: 3}
+    name: Assasin
+    cost: 7

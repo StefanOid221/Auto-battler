@@ -5,13 +5,19 @@ using UnityEngine;
 public class PlayerData : Manager<PlayerData>
 {
     public int Money { get; private set; }
+    public int level { get; private set; }
+    public int exp { get; private set; }
+
+    public int expNeeded { get; private set; }
 
     public System.Action OnUpdate;
-    public List<BaseUnit> benchUnits = new List<BaseUnit>();
 
     private void Start()
     {
         Money = 250;
+        level = 1;
+        exp = 0;
+        expNeeded = 2;
     }
 
     public bool CanAfford(int amount)
@@ -24,17 +30,36 @@ public class PlayerData : Manager<PlayerData>
         Money -= amount;
         OnUpdate?.Invoke();
     }
-
-    public void removeAtTile(Node node)
+    public void UpdateExp()
     {
-        foreach(BaseUnit unit in benchUnits)
+        exp += 2;
+        if (exp == expNeeded)
         {
-            if (unit.CurrentNode == node) {
-                benchUnits.Remove(unit);
-                Debug.Log(benchUnits.Count);
-            }
-               
+            level += 1;
+            exp = 0;
         }
-    }    
-    
+        switch (level)
+        {
+            case 2:
+                expNeeded = 6;
+                break;
+            case 3:
+                expNeeded = 10;
+                break;
+            case 4:
+                expNeeded = 20;
+                break;
+            case 5:
+                expNeeded = 36;
+                break;
+            default:
+                expNeeded = 50;
+                break;
+
+        }
+        
+
+
+        OnUpdate?.Invoke();
+    }
 }

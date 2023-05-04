@@ -5,8 +5,8 @@ using System.Linq;
 
 public class BaseUnit : MonoBehaviour
 {
-    public GameObject gameObject;
-    //public Animator animator;
+    //public GameObject gameObject;
+    public Animator animator;
     protected HealthBar healthbar;
     public HealthBar barPrefab;
 
@@ -18,6 +18,7 @@ public class BaseUnit : MonoBehaviour
     public float movementSpeed = 1f; //Attacks per second
 
     public bool moving;
+    public bool isBenched = true;
     protected Node destination;
 
     public Team myTeam;
@@ -25,6 +26,7 @@ public class BaseUnit : MonoBehaviour
     protected BaseUnit currentTarget;
 
     public Node CurrentNode => currentNode;
+    
     protected bool inRange => currentTarget != null && Vector3.Distance(this.transform.position, currentTarget.transform.position) <= range;
 
     protected bool hasEnemy => currentTarget != null;
@@ -33,6 +35,10 @@ public class BaseUnit : MonoBehaviour
     protected bool dead = false;
     protected float waitBetweenAttack;
 
+    public void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
     public void Setup(Team team, Node spawnNode)
     {
         myTeam = team;
@@ -62,42 +68,49 @@ public class BaseUnit : MonoBehaviour
 
     protected void GetInRange()
     {
-        if (currentTarget == null)
-            return;
-
-        if (!moving)
+        if (!isBenched)
         {
-            destination = null;
-            List<Node> candidates = GridManager.Instance.GetNodesCloseTo(currentTarget.currentNode);
-            candidates = candidates.OrderBy(x => Vector3.Distance(x.worldPosition, this.transform.position)).ToList();
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                if (!candidates[i].IsOccupied)
-                {
-                    destination = candidates[i];
-                    break;
-                }
+            if (currentTarget == null) {
+                animator.SetTrigger("Idle");
+                return;
             }
-            if (destination == null)
-                return;
+            if (!moving)
+            {
+                destination = null;
+                List<Node> candidates = GridManager.Instance.GetNodesCloseTo(currentTarget.currentNode);
+                candidates = candidates.OrderBy(x => Vector3.Distance(x.worldPosition, this.transform.position)).ToList();
+                for (int i = 0; i < candidates.Count; i++)
+                {
+                    if (!candidates[i].IsOccupied)
+                    {
+                        destination = candidates[i];
+                        break;
+                    }
+                }
+                if (destination == null) {
+                    animator.SetTrigger("Idle");
+                    return;
+                }
+                    
 
-            var path = GridManager.Instance.GetPath(currentNode, destination);
-            if (path == null && path.Count >= 1)
-                return;
+                var path = GridManager.Instance.GetPath(currentNode, destination);
+                if (path == null && path.Count >= 1)
+                    return;
 
-            if (path[1].IsOccupied)
-                return;
+                if (path[1].IsOccupied)
+                    return;
 
-            path[1].SetOccupied(true);
-            destination = path[1];
-        }
+                path[1].SetOccupied(true);
+                destination = path[1];
+            }
 
-        moving = !MoveTowards();
+            moving = !MoveTowards();
 
-        if (!moving)
-        {
-            currentNode.SetOccupied(false);
-            currentNode = destination;
+            if (!moving)
+            {
+                currentNode.SetOccupied(false);
+                currentNode = destination;
+            }
         }
     }
 
@@ -118,7 +131,8 @@ public class BaseUnit : MonoBehaviour
         if (!canAttack)
             return;
 
-        //animator.SetTrigger("attack");
+        this.transform.LookAt(currentTarget.transform.position);
+        animator.SetTrigger("Attacking");
 
         waitBetweenAttack = 1 / attackSpeed;
         StartCoroutine(WaitCoroutine());
@@ -128,7 +142,7 @@ public class BaseUnit : MonoBehaviour
     {
         canAttack = false;
         yield return null;
-        //animator.ResetTrigger("attack");
+        animator.ResetTrigger("Attacking");
         yield return new WaitForSeconds(waitBetweenAttack);
         canAttack = true;
     }
@@ -142,13 +156,17 @@ public class BaseUnit : MonoBehaviour
 
     protected bool MoveTowards()
     {
+
         Vector3 direction = destination.worldPosition - this.transform.position;
         if (direction.sqrMagnitude <= 0.005f)
         {
             transform.position = destination.worldPosition;
+            animator.SetTrigger("Idle");
             return true;
         }
+        animator.SetTrigger("Running");
         this.transform.position += direction.normalized * movementSpeed * Time.deltaTime;
+        this.transform.LookAt(destination.worldPosition);
         return false;
     }
 }
