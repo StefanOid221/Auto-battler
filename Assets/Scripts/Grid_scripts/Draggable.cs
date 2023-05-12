@@ -107,12 +107,13 @@ public class Draggable : MonoBehaviour
                     Debug.Log("5");
                     if (previousTile.isBench && !actualTile.isBench)
                     {
-                        if (GameManager.Instance.team1BoardhUnits.Count < PlayerData.Instance.level)
+                        if (GameManager.Instance.team1BoardUnits.Count < PlayerData.Instance.level)
                         {
                             Debug.Log("5.1");
                             GameManager.Instance.removeAtTile(candidateNode);
                             thisUnit.isBenched = false;
-                            GameManager.Instance.team1BoardhUnits.Add(thisUnit);
+                            thisUnit.previousFightTile = actualTile;
+                            GameManager.Instance.team1BoardUnits.Add(thisUnit);
                             moveUnit(thisUnit, candidateNode);
                             return true;
                         }
@@ -123,7 +124,7 @@ public class Draggable : MonoBehaviour
                         Debug.Log("5.2");
                         GameManager.Instance.team1BenchUnits.Add(thisUnit);
                         thisUnit.isBenched = true;
-                        GameManager.Instance.team1BoardhUnits.Remove(thisUnit);
+                        GameManager.Instance.team1BoardUnits.Remove(thisUnit);
                         moveUnit(thisUnit, candidateNode);
                         return true;
                     }
@@ -134,7 +135,11 @@ public class Draggable : MonoBehaviour
                         return true;
                     }
                     else if (!actualTile.isBench && !previousTile.isBench)
+                    {
                         moveUnit(thisUnit, candidateNode);
+                        thisUnit.previousFightTile = actualTile;
+                    }
+                        
                     Debug.Log("5.4");
                     previousTile = actualTile;
                     return true;

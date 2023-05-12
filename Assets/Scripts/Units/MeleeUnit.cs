@@ -4,26 +4,30 @@ using UnityEngine;
 
 public class MeleeUnit : BaseUnit
 {
-   
-    public void Update()
-    {
-        if (!hasEnemy)
-        {
-            FindTarget();
-        }
 
-        if (inRange && !moving)
-        {
-            //In range for attack!
-            if (canAttack)
+    protected override void Update()
+    {
+        base.Update();
+        if (GameManager.Instance.gameState == GameState.Fight) 
+        { 
+            if (!hasEnemy)
             {
-                Attack();
-                currentTarget.TakeDamage(baseDamage);
+                FindTarget();
             }
-        }
-        else
-        {
-            GetInRange();
+
+            if (inRange && !moving)
+            {
+                //In range for attack!
+                if (canAttack)
+                {
+                    Attack();
+                    currentTarget.TakeDamage(baseDamage);
+                }
+            }
+            else
+            {
+                GetInRange();
+            }
         }
     }
 }

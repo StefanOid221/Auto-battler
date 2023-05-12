@@ -25,6 +25,8 @@ public class BaseUnit : MonoBehaviour
     protected Node currentNode;
     protected BaseUnit currentTarget;
 
+    public Tile previousFightTile;
+
     public Node CurrentNode => currentNode;
     
     protected bool inRange => currentTarget != null && Vector3.Distance(this.transform.position, currentTarget.transform.position) <= range;
@@ -56,7 +58,7 @@ public class BaseUnit : MonoBehaviour
         BaseUnit entity = null;
         foreach (BaseUnit e in allEnemies)
         {
-            if (Vector3.Distance(e.transform.position, this.transform.position) <= minDistance)
+            if (Vector3.Distance(e.transform.position, this.transform.position) <= minDistance && e.isActiveAndEnabled)
             {
                 minDistance = Vector3.Distance(e.transform.position, this.transform.position);
                 entity = e;
@@ -168,5 +170,28 @@ public class BaseUnit : MonoBehaviour
         this.transform.position += direction.normalized * movementSpeed * Time.deltaTime;
         this.transform.LookAt(destination.worldPosition);
         return false;
+    }
+    protected virtual void Update()
+    {
+        if (this.isBenched)
+            animator.SetTrigger("Idle");
+        if (currentTarget != null) {
+            if (!currentTarget.gameObject.activeSelf)
+            {
+
+                FindTarget();
+            }
+        }
+        
+        Debug.Log(currentTarget + "target");
+
+    }
+    public void respawn()
+    {
+        this.gameObject.SetActive(true);
+        this.transform.position = previousFightTile.transform.position; 
+        this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
+        this.baseHealth = 20;
+        this.dead = false;
     }
 }

@@ -10,6 +10,7 @@ public class UIShop : MonoBehaviour
     public Text level;
     public Text exp;
 
+
     private UnitDatabaseSO cachedDb;
     private int refreshCost = 1;
     private int levelUpCost = 2;
