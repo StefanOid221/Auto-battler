@@ -1061,13 +1061,17 @@ MonoBehaviour:
   animator: {fileID: 0}
   barPrefab: {fileID: 3402602698459576057, guid: c4b6d66b42b3bc447a56349a2ebf55d2, type: 3}
   baseDamage: 3
+  level: 1
   baseHealth: 20
+  baseDefaulthealth: 0
+  unitType: 2
   range: 1
   attackSpeed: 1.5
   movementSpeed: 1
   moving: 0
   isBenched: 1
   myTeam: 0
+  previousFightTile: {fileID: 0}
 --- !u!114 &-7810035294770998546
 MonoBehaviour:
   m_ObjectHideFlags: 0

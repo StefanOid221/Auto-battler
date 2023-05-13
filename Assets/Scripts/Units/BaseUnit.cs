@@ -10,11 +10,14 @@ public class BaseUnit : MonoBehaviour
     protected HealthBar healthbar;
     public HealthBar barPrefab;
 
-    public int baseDamage = 1;
-    public int baseHealth = 3;
+    public double baseDamage = 1;
+    public int level = 1;
+    public float baseHealth = 3;
+    public float baseDefaulthealth;
+    public int unitType;
     [Range(1, 5)]
     public int range = 1;
-    public float attackSpeed = 1f; //Attacks per second
+    public double attackSpeed = 1f; //Attacks per second
     public float movementSpeed = 1f; //Attacks per second
 
     public bool moving;
@@ -40,6 +43,7 @@ public class BaseUnit : MonoBehaviour
     public void Start()
     {
         animator = GetComponent<Animator>();
+        baseDefaulthealth = baseHealth;
     }
     public void Setup(Team team, Node spawnNode)
     {
@@ -116,9 +120,9 @@ public class BaseUnit : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(double amount)
     {
-        baseHealth -= amount;
+        baseHealth -= (float)amount;
         healthbar.UpdateBar(baseHealth);
 
         if (baseHealth <= 0 && !dead)
@@ -136,7 +140,7 @@ public class BaseUnit : MonoBehaviour
         this.transform.LookAt(currentTarget.transform.position);
         animator.SetTrigger("Attacking");
 
-        waitBetweenAttack = 1 / attackSpeed;
+        waitBetweenAttack = (float)(1 / attackSpeed);
         StartCoroutine(WaitCoroutine());
     }
 
@@ -181,17 +185,24 @@ public class BaseUnit : MonoBehaviour
 
                 FindTarget();
             }
-        }
-        
-        Debug.Log(currentTarget + "target");
-
+        } 
     }
     public void respawn()
     {
         this.gameObject.SetActive(true);
         this.transform.position = previousFightTile.transform.position; 
         this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
-        this.baseHealth = 20;
+        this.baseHealth = baseDefaulthealth;
         this.dead = false;
+    }
+    public void levelUp()
+    {
+        this.level += 1;
+        this.baseDamage *= 1.5;
+        this.baseDefaulthealth *= 2;
+        this.baseHealth = baseDefaulthealth;
+        this.attackSpeed *= 1.2;
+        this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
     }
 }

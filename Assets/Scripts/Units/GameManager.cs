@@ -119,6 +119,7 @@ public class GameManager : Manager<GameManager>
         team1BenchUnits.Add(newUnit);
 
         newUnit.Setup(Team.Team1, GridManager.Instance.GetFreeShopNode(Team.Team1));
+        checkLevelUp(newUnit);
     }
 
     public void UnitDead(BaseUnit unit)
@@ -146,6 +147,47 @@ public class GameManager : Manager<GameManager>
             team1BenchUnits.Remove(unit);
         }
     }
+
+    public void checkLevelUp(BaseUnit unit)
+    {
+        List<BaseUnit> unitsToRemove = new List<BaseUnit>();
+        BaseUnit unitLevelUp = null;
+        foreach (BaseUnit u in team1Units)
+        {
+            if (u.unitType == unit.unitType)
+            {
+                if (unitsToRemove.Count == 2)
+                {
+                    unitLevelUp = u;
+                    break;
+                }
+                else unitsToRemove.Add(u);
+            }
+        }
+        if (unitsToRemove.Count < 2 || unitLevelUp == null) return;
+        else
+        {
+            foreach (BaseUnit un in unitsToRemove)
+            {
+                team1Units.Remove(un);
+                team1BenchUnits.Remove(un);
+                un.CurrentNode.SetOccupied(false);
+                Destroy(un.gameObject);
+            }
+            foreach (BaseUnit un2 in team1Units)
+            {
+                if (GameObject.ReferenceEquals(un2.gameObject, unitLevelUp.gameObject))
+                {
+                    un2.levelUp();
+                    Debug.Log("1");
+                    Debug.Log(team1Units.Count);
+                    Debug.Log(team1BenchUnits.Count);
+                }
+            }
+        }
+    }
+
+
 
 }
 

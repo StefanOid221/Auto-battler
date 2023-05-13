@@ -32,6 +32,7 @@ public class GridManager : Manager<GridManager>
         return null;
     }
 
+
     public Node GetFreeShopNode(Team forTeam)
     {
         Tile[] tiles = FindObjectsOfType<Tile>();
@@ -72,6 +73,7 @@ public class GridManager : Manager<GridManager>
 
         return null;
     }
+    
 
     public Tile GetTileForNode(Node n)
     {
