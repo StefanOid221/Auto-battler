@@ -35,7 +35,7 @@ public class UIShop : MonoBehaviour
 
     public void OnCardClick(UICard card, UnitDatabaseSO.UnitData cardData)
     {
-        if (PlayerData.Instance.CanAfford(cardData.cost) && GameManager.Instance.team1BenchUnits.Count < 7)
+        if (GameManager.Instance.gameState == GameState.Decision && PlayerData.Instance.CanAfford(cardData.cost) && GameManager.Instance.team1BenchUnits.Count < 7)
         {
             PlayerData.Instance.SpendMoney(cardData.cost);
             card.gameObject.SetActive(false);

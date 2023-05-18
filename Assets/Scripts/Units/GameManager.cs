@@ -13,6 +13,9 @@ public class GameManager : Manager<GameManager>
     public Transform team1Parent;
     public Transform team2Parent;
 
+    public int gamesWonPlayer = 0;
+    public int gamesWonAI = 0;
+
     List<BaseUnit> team1Units = new List<BaseUnit>();
     List<BaseUnit> team2Units = new List<BaseUnit>();
 
@@ -27,6 +30,8 @@ public class GameManager : Manager<GameManager>
 
     public Text time;
     public Text state;
+    public Text roundsPlayer;
+    public Text roundsAi;
 
     public bool unitsFighting = false;
 
@@ -40,6 +45,8 @@ public class GameManager : Manager<GameManager>
     void Start()
     {
         SetState(GameState.Decision);
+        roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
+        roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
     }
 
     void Update()
@@ -106,6 +113,13 @@ public class GameManager : Manager<GameManager>
             {
                 unit.respawn();
             }
+            if (team1CopyBoardUnits.Count == 0)
+                gamesWonAI += 1;
+            else gamesWonPlayer += 1;
+            roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
+            roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
+            PlayerData.Instance.moneyEndRound();
+            IAData.Instance.moneyEndRound();
         }
         
         
@@ -152,9 +166,11 @@ public class GameManager : Manager<GameManager>
     {
         List<BaseUnit> unitsToRemove = new List<BaseUnit>();
         BaseUnit unitLevelUp = null;
+        if (unit.level == 3)
+            return;
         foreach (BaseUnit u in team1Units)
         {
-            if (u.unitType == unit.unitType)
+            if (u.unitType == unit.unitType && u.level == unit.level)
             {
                 if (unitsToRemove.Count == 2)
                 {
@@ -179,9 +195,11 @@ public class GameManager : Manager<GameManager>
                 if (GameObject.ReferenceEquals(un2.gameObject, unitLevelUp.gameObject))
                 {
                     un2.levelUp();
-                    Debug.Log("1");
-                    Debug.Log(team1Units.Count);
-                    Debug.Log(team1BenchUnits.Count);
+                    if (!un2.isBenched)
+                    {
+                        team1BoardUnits.Remove(un2);
+                    }
+
                 }
             }
         }

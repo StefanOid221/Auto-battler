@@ -1852,7 +1852,7 @@ MonoBehaviour:
   baseDamage: 2
   level: 1
   baseHealth: 10
-  baseDefaulthealth: 0
+  baseDefaulthealth: 10
   unitType: 4
   range: 3
   attackSpeed: 2

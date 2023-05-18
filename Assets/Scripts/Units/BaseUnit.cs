@@ -202,7 +202,14 @@ public class BaseUnit : MonoBehaviour
         this.baseDefaulthealth *= 2;
         this.baseHealth = baseDefaulthealth;
         this.attackSpeed *= 1.2;
-        this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        if (this.level == 2)
+        {
+            this.gameObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            GameManager.Instance.checkLevelUp(this);
+
+        }
+        if (this.level == 3)
+            this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
 
     }
 }

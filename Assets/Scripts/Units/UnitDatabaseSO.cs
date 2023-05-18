@@ -10,7 +10,7 @@ public class UnitDatabaseSO : ScriptableObject
     {
         public BaseUnit prefab;
         public string name;
-        //public Sprite icon;
+        public Sprite icon;
 
         public int cost;
     }

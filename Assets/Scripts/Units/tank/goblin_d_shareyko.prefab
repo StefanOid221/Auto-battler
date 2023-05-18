@@ -2522,7 +2522,7 @@ MonoBehaviour:
   baseDamage: 4
   level: 1
   baseHealth: 10
-  baseDefaulthealth: 0
+  baseDefaulthealth: 10
   unitType: 3
   range: 1
   attackSpeed: 2.5

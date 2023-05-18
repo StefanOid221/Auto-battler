@@ -14,7 +14,7 @@ public class UICard : MonoBehaviour
 
     public void Setup(UnitDatabaseSO.UnitData myData, UIShop shopRef)
     {
-        //icon.sprite = myData.icon;
+        icon.sprite = myData.icon;
         name.text = myData.name;
         cost.text = myData.cost.ToString();
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerData : Manager<PlayerData>
+public class IAData : Manager<IAData>
 {
     public int Money { get; private set; }
     public int level { get; private set; }
@@ -24,15 +24,14 @@ public class PlayerData : Manager<PlayerData>
     {
         return amount <= Money;
     }
-
-    public void SpendMoney(int amount)
-    {
-        Money -= amount;
-        OnUpdate?.Invoke();
-    }
     public void moneyEndRound()
     {
         Money += 10 + level;
+        OnUpdate?.Invoke();
+    }
+    public void SpendMoney(int amount)
+    {
+        Money -= amount;
         OnUpdate?.Invoke();
     }
     public void UpdateExp()
@@ -62,7 +61,7 @@ public class PlayerData : Manager<PlayerData>
                 break;
 
         }
-        
+
 
 
         OnUpdate?.Invoke();

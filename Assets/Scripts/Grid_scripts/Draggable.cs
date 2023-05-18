@@ -32,19 +32,21 @@ public class Draggable : MonoBehaviour
 
     public void OnStartDrag()
     {
-
-        oldPosition = this.transform.position;
-        oldSortingOrder = Renderer.sortingOrder;
-        previousTile = actualTile;
-        Renderer.sortingOrder = 20;
-        IsDragging = true;
-        Debug.Log("1");
+        if(GameManager.Instance.gameState != GameState.Fight) {
+            oldPosition = this.transform.position;
+            oldSortingOrder = Renderer.sortingOrder;
+            previousTile = actualTile;
+            Renderer.sortingOrder = 20;
+            IsDragging = true;
+            Debug.Log("1");
+        }
+        
     }
 
     public void OnDragging()
     {
         //Debug.Log("2");
-        if (!IsDragging)
+        if (!IsDragging || GameManager.Instance.gameState == GameState.Fight)
             return;
 
         Tile tileUnder = GetTileUnder();
@@ -69,7 +71,7 @@ public class Draggable : MonoBehaviour
 
     public void OnEndDrag()
     {
-        if (!IsDragging)
+        if (!IsDragging || GameManager.Instance.gameState == GameState.Fight)
             return;
 
 
@@ -101,25 +103,25 @@ public class Draggable : MonoBehaviour
             if (candidateNode != null && thisUnit != null)  
             {
                 Debug.Log("3");
-                Debug.Log(thisUnit);
                 if (!candidateNode.IsOccupied && actualTile.team == previousTile.team)
                 {
                     Debug.Log("5");
                     if (previousTile.isBench && !actualTile.isBench)
                     {
-                        if (GameManager.Instance.team1BoardUnits.Count < PlayerData.Instance.level)
+                        if (GameManager.Instance.team1BoardUnits.Count < PlayerData.Instance.level && GameManager.Instance.gameState == GameState.Decision)
                         {
                             Debug.Log("5.1");
                             GameManager.Instance.removeAtTile(candidateNode);
                             thisUnit.isBenched = false;
                             thisUnit.previousFightTile = actualTile;
                             GameManager.Instance.team1BoardUnits.Add(thisUnit);
+                            GameManager.Instance.team1BenchUnits.Remove(thisUnit);
                             moveUnit(thisUnit, candidateNode);
                             return true;
                         }
                         else return false;
                     } 
-                    else if (actualTile.isBench && !previousTile.isBench)
+                    else if (actualTile.isBench && !previousTile.isBench && GameManager.Instance.gameState == GameState.Decision)
                     {
                         Debug.Log("5.2");
                         GameManager.Instance.team1BenchUnits.Add(thisUnit);
@@ -134,7 +136,7 @@ public class Draggable : MonoBehaviour
                         moveUnit(thisUnit, candidateNode);
                         return true;
                     }
-                    else if (!actualTile.isBench && !previousTile.isBench)
+                    else if (!actualTile.isBench && !previousTile.isBench && GameManager.Instance.gameState == GameState.Decision)
                     {
                         moveUnit(thisUnit, candidateNode);
                         thisUnit.previousFightTile = actualTile;

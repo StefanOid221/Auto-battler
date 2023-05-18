@@ -1244,7 +1244,7 @@ MonoBehaviour:
   baseDamage: 2
   level: 1
   baseHealth: 40
-  baseDefaulthealth: 0
+  baseDefaulthealth: 40
   unitType: 1
   range: 1
   attackSpeed: 1
