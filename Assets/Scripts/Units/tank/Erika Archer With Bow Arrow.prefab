@@ -1851,8 +1851,9 @@ MonoBehaviour:
   barPrefab: {fileID: 3402602698459576057, guid: c4b6d66b42b3bc447a56349a2ebf55d2, type: 3}
   baseDamage: 2
   level: 1
-  baseHealth: 10
-  baseDefaulthealth: 10
+  baseHealth: 15
+  baseDefaulthealth: 15
+  cost: 2
   unitType: 4
   range: 3
   attackSpeed: 2

@@ -1060,10 +1060,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
   barPrefab: {fileID: 3402602698459576057, guid: c4b6d66b42b3bc447a56349a2ebf55d2, type: 3}
-  baseDamage: 3
+  baseDamage: 2
   level: 1
-  baseHealth: 20
-  baseDefaulthealth: 20
+  baseHealth: 35
+  baseDefaulthealth: 35
+  cost: 3
   unitType: 2
   range: 1
   attackSpeed: 1.5

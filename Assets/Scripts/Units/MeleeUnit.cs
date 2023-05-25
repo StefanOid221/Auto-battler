@@ -7,7 +7,9 @@ public class MeleeUnit : BaseUnit
 
     protected override void Update()
     {
+
         base.Update();
+
         if (GameManager.Instance.gameState == GameState.Fight) 
         { 
             if (!hasEnemy)

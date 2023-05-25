@@ -14,6 +14,7 @@ public class BaseUnit : MonoBehaviour
     public int level = 1;
     public float baseHealth = 3;
     public float baseDefaulthealth;
+    public float cost;
     public int unitType;
     [Range(1, 5)]
     public int range = 1;
@@ -76,6 +77,7 @@ public class BaseUnit : MonoBehaviour
     {
         if (!isBenched)
         {
+             
             if (currentTarget == null) {
                 animator.SetTrigger("Idle");
                 return;
@@ -162,7 +164,7 @@ public class BaseUnit : MonoBehaviour
 
     protected bool MoveTowards()
     {
-
+        
         Vector3 direction = destination.worldPosition - this.transform.position;
         if (direction.sqrMagnitude <= 0.005f)
         {
@@ -189,6 +191,7 @@ public class BaseUnit : MonoBehaviour
     }
     public void respawn()
     {
+        this.currentNode.SetOccupied(false);
         this.gameObject.SetActive(true);
         this.transform.position = previousFightTile.transform.position; 
         this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
@@ -205,8 +208,9 @@ public class BaseUnit : MonoBehaviour
         if (this.level == 2)
         {
             this.gameObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            GameManager.Instance.checkLevelUp(this);
-
+            if (myTeam == Team.Team1)
+                GameManager.Instance.checkLevelUp(this, Player.Player);
+            else GameManager.Instance.checkLevelUp(this, Player.IA_Player);
         }
         if (this.level == 3)
             this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);

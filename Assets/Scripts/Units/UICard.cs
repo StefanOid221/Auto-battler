@@ -10,7 +10,7 @@ public class UICard : MonoBehaviour
     public Text cost;
 
     private UIShop shopRef;
-    private UnitDatabaseSO.UnitData myData;
+    public UnitDatabaseSO.UnitData myData;
 
     public void Setup(UnitDatabaseSO.UnitData myData, UIShop shopRef)
     {

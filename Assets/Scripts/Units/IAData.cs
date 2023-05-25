@@ -14,7 +14,7 @@ public class IAData : Manager<IAData>
 
     private void Start()
     {
-        Money = 10;
+        Money = 20;
         level = 1;
         exp = 0;
         expNeeded = 2;
