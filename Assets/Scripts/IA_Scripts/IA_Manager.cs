@@ -54,10 +54,7 @@ public class IA_Manager : Manager<IA_Manager>
 
         int mostExpensive = 2;
 
-        foreach (UICard unit in shopRef.allCards)
-        {
-            Debug.Log(unit.myData.prefab);
-        }
+        
 
         foreach (BaseUnit unit in GameManager.Instance.team2Units)
         {

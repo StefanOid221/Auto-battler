@@ -38,7 +38,7 @@ public class Draggable : MonoBehaviour
             previousTile = actualTile;
             Renderer.sortingOrder = 20;
             IsDragging = true;
-            Debug.Log("1");
+
         }
         
     }
@@ -102,15 +102,15 @@ public class Draggable : MonoBehaviour
             Node candidateNode = GridManager.Instance.GetNodeForTile(actualTile);
             if (candidateNode != null && thisUnit != null)  
             {
-                Debug.Log("3");
+
                 if (!candidateNode.IsOccupied && actualTile.team == previousTile.team)
                 {
-                    Debug.Log("5");
+
                     if (previousTile.isBench && !actualTile.isBench)
                     {
                         if (GameManager.Instance.team1BoardUnits.Count < PlayerData.Instance.level && GameManager.Instance.gameState == GameState.Decision)
                         {
-                            Debug.Log("5.1");
+
                             GameManager.Instance.removeAtTile(candidateNode);
                             thisUnit.isBenched = false;
                             thisUnit.previousFightTile = actualTile;
@@ -123,7 +123,7 @@ public class Draggable : MonoBehaviour
                     } 
                     else if (actualTile.isBench && !previousTile.isBench && GameManager.Instance.gameState == GameState.Decision)
                     {
-                        Debug.Log("5.2");
+
                         GameManager.Instance.team1BenchUnits.Add(thisUnit);
                         thisUnit.isBenched = true;
                         GameManager.Instance.team1BoardUnits.Remove(thisUnit);
@@ -132,7 +132,7 @@ public class Draggable : MonoBehaviour
                     }
                     if (actualTile.isBench && previousTile.isBench)
                     {
-                        Debug.Log("5.3");
+
                         moveUnit(thisUnit, candidateNode);
                         return true;
                     }
@@ -142,7 +142,7 @@ public class Draggable : MonoBehaviour
                         thisUnit.previousFightTile = actualTile;
                     }
                         
-                    Debug.Log("5.4");
+
                     previousTile = actualTile;
                     return true;
                 }

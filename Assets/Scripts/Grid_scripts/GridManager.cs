@@ -13,7 +13,7 @@ public class GridManager : Manager<GridManager>
     Graph graph;
     protected Dictionary<Team, int> startPositionPerTeam;
 
-    List<Tile> allTiles = new List<Tile>();
+    public List<Tile> allTiles = new List<Tile>();
 
 
     public Node GetFreeNode(Team forTeam)
@@ -30,6 +30,40 @@ public class GridManager : Manager<GridManager>
             }
         }
         return null;
+    }
+
+    public Node GetRandomFreeNode(Team forTeam)
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+        bool encontrado = false;
+        System.Random random = new System.Random();
+
+        while (!encontrado)
+        {
+            
+            int randomNumber = random.Next(0, 27);
+            if (!tiles[randomNumber].isBench && tiles[randomNumber].team == forTeam)
+            {
+                Node node = GetNodeForTile(tiles[randomNumber]);
+                if (!node.IsOccupied)
+                    return node;
+            }
+        }
+        return null;
+    }
+
+    public void resetNodes()
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+
+        foreach (Tile tile in tiles)
+        {
+            
+             Node node = GetNodeForTile(tile);
+             node.SetOccupied(false);
+            
+        }
+        
     }
 
 

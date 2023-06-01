@@ -36,22 +36,30 @@ public class GameManager : Manager<GameManager>
     public Text roundsPlayer;
     public Text roundsAi;
 
+    public delegate void FightCompletedEventHandler();
+    public int randomLevelIATraining;
+
+    // Declare the event
+    public event FightCompletedEventHandler FightCompleted;
+
     public bool unitsFighting = false;
 
 
     int unitsPerTeam = 4;
 
-    public float decisionTime = 10f; 
+    public float decisionTime = 2f; 
     public GameState gameState;
     private float stateTimer;
 
     void Start()
     {
         SetState(GameState.Decision);
+        //spawnRandom();
         roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
         roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
 
         playerShopRef = playerShop.GetComponent<UIShop>();
+        IA_Manager.Instance.buyCard();
     }
 
     void Update()
@@ -62,25 +70,68 @@ public class GameManager : Manager<GameManager>
                 state.text = "Decision round";
                 stateTimer += Time.deltaTime;
                 
+
                 if (stateTimer >= decisionTime)
                 {
+                    IA_Manager.Instance.buyCard();
+                    //Debug.Log("buys");
                     SetState(GameState.Fight);
                     unitsFighting = true;
+                    DebugFight(); // Call DebugFight() once when transitioning to the Fight state
                 }
-                IA_Manager.Instance.buyCard();
                 break;
+
             case GameState.Fight:
                 state.text = "Fight round";
-                DebugFight();
+                stateTimer += Time.deltaTime;
+                if (stateTimer > 30f || team1CopyBoardUnits.Count == 0 || team2CopyBoardUnits.Count == 0)
+                {
+                    SetState(GameState.Decision);
+                    //resetGame();
+                    playerShopRef.RefreshEndRound();
+
+                    foreach (BaseUnit unit in team1BoardUnits)
+                    {
+                        unit.respawn();
+                    }
+                    foreach (BaseUnit unit in team2BoardUnits)
+                    {
+                        unit.respawn();
+                    }
+                    if (team1CopyBoardUnits.Count < team2BoardUnits.Count)
+                        gamesWonAI += 1;
+                    else gamesWonPlayer += 1;
+                    team1CopyBoardUnits.Clear();
+                    team2CopyBoardUnits.Clear();
+                    roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
+                    roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
+                    PlayerData.Instance.moneyEndRound();
+                    IA_Manager.Instance.shopRef.RefreshEndRound();
+                    IAData.Instance.moneyEndRound();
+                    
+
+
+                    CompleteFight();
+                    //resetGame();
+                }
+                // DebugFight() is already called when transitioning to the Fight state,
+                // so there's no need to call it again here
                 break;
         }
-        time.text = "Time:" + (decisionTime -((int)stateTimer)).ToString();
+
+        time.text = "Time: " + Mathf.RoundToInt(decisionTime - stateTimer).ToString();
     }
+
 
     void SetState(GameState newState)
     {
         gameState = newState;
         stateTimer = 0f;
+        if (newState == GameState.Decision)
+        {
+            team1CopyBoardUnits.Clear();
+            team2CopyBoardUnits.Clear();
+        }
     }
 
 
@@ -92,7 +143,10 @@ public class GameManager : Manager<GameManager>
     }
     public void DebugFight()
     {
+
+        //stateTimer += Time.deltaTime;
         if (unitsFighting) {
+            
             foreach (BaseUnit unit in team1BoardUnits){
                 team1CopyBoardUnits.Add(unit);
             }
@@ -101,45 +155,42 @@ public class GameManager : Manager<GameManager>
                 team2CopyBoardUnits.Add(unit);
             }
 
-            //team2CopyBoardUnits = team2BoardUnits;
-            //for (int i = 0; i < unitsPerTeam; i++)
-            //{
-            //    int randomIndex = UnityEngine.Random.Range(0, unitDatabase.allUnits.Count);
-            //    BaseUnit newUnit = Instantiate(unitDatabase.allUnits[randomIndex].prefab, team2Parent);
-
-            //    team2Units.Add(newUnit);
-            //    team2BoardUnits.Add(newUnit);
-
-            //    newUnit.Setup(Team.Team2, GridManager.Instance.GetFreeNode(Team.Team2));
-            //    newUnit.isBenched = false;
-            //}
             unitsFighting = false;
         }
-        if (team1CopyBoardUnits.Count == 0 || team2CopyBoardUnits.Count == 0)
+        if (stateTimer >30f || team1CopyBoardUnits.Count == 0 || team2CopyBoardUnits.Count == 0 )
         {
-            SetState(GameState.Decision);
-            IA_Manager.Instance.shopRef.RefreshEndRound();
-            playerShopRef.RefreshEndRound();
-            team1CopyBoardUnits.Clear();
-            team2CopyBoardUnits.Clear();
-            foreach (BaseUnit unit in team1BoardUnits)
-            {
-                unit.respawn();
-            }
-            foreach(BaseUnit unit in team2BoardUnits)
-            {
-                unit.respawn();
-            }
-            if (team1CopyBoardUnits.Count == 0)
-                gamesWonAI += 1;
-            else gamesWonPlayer += 1;
-            roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
-            roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
-            PlayerData.Instance.moneyEndRound();
-            IAData.Instance.moneyEndRound();
+            //SetState(GameState.Decision);
+            ////resetGame();
+            ////IA_Manager.Instance.shopRef.RefreshEndRound();
+            ////playerShopRef.RefreshEndRound();
+
+            ////foreach (BaseUnit unit in team1BoardUnits)
+            ////{
+            ////    unit.respawn();
+            ////}
+            ////foreach (BaseUnit unit in team2BoardUnits)
+            ////{
+            ////    unit.respawn();
+            ////}
+            //if (team1CopyBoardUnits.Count < team2BoardUnits.Count)
+            //    gamesWonAI += 1;
+            //else gamesWonPlayer += 1;
+            //team1CopyBoardUnits.Clear();
+            //team2CopyBoardUnits.Clear();
+            //roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
+            //roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
+            //PlayerData.Instance.moneyEndRound();
+            //IAData.Instance.moneyEndRound();
+            ////IA_Manager.Instance.buyCard();
+
+            //Debug.Log("end fight");
+
+            //FightCompleted();
+            //resetGame();
+            
         }
-        
-        
+
+
     }
 
     public void OnUnitBought(UnitDatabaseSO.UnitData entityData, Player player)
@@ -171,7 +222,8 @@ public class GameManager : Manager<GameManager>
     {
         team1CopyBoardUnits.Remove(unit);
         team2CopyBoardUnits.Remove(unit);
-
+        
+        unit.CurrentNode.SetOccupied(false);
         unit.gameObject.SetActive(false);
     }
 
@@ -277,7 +329,109 @@ public class GameManager : Manager<GameManager>
         }
         
     }
+    public void resetGame()
+    {
 
+        foreach (BaseUnit unit in team1Units)
+        {
+            UnitDead(unit);
+            unit.gameObject.SetActive(false);
+
+            unit.CurrentNode.SetOccupied(false);
+            Destroy(unit.gameObject);
+        }
+
+        foreach (BaseUnit unit in team2Units)
+        {
+            UnitDead(unit);
+            unit.gameObject.SetActive(false);
+
+            unit.CurrentNode.SetOccupied(false);
+            Destroy(unit.gameObject);
+        }
+
+
+        //gamesWonPlayer = 0;
+        //gamesWonAI = 0;
+        team1Units.Clear();
+        team2Units.Clear();
+        team2BoardUnits.Clear();
+        team1BoardUnits.Clear();
+        team2BenchUnits.Clear();
+        team1BenchUnits.Clear();
+        randomLevelIATraining = 0;
+        IAData.Instance.setLevel(1);
+
+        GridManager.Instance.resetNodes();
+        
+
+        spawnRandom();
+    }
+
+    public void spawnRandom()
+    {
+        System.Random random = new System.Random();
+        int randomNumber = random.Next(1, 7);
+        int randomNumbreLevel = random.Next(1, 7);
+        IAData.Instance.setLevel(randomNumbreLevel);
+        
+
+        for (int i = 0; i < 7; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, unitDatabase.allUnits.Count);
+            int randomLevel = UnityEngine.Random.Range(0, 3);
+            BaseUnit newUnit = Instantiate(unitDatabase.allUnits[randomIndex].prefab, team2Parent);
+
+            //if (randomLevel != 0)
+            //{
+            //    for (int j = 0; j < randomLevel; i++)
+            //        newUnit.levelUpTrain();
+            //}
+            
+
+            team2Units.Add(newUnit);
+            team2BoardUnits.Add(newUnit);
+
+            newUnit.Setup(Team.Team2, GridManager.Instance.GetFreeNode(Team.Team2));
+            newUnit.isBenched = false;
+        }
+        for (int i = 0; i < randomNumbreLevel; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, unitDatabase.allUnits.Count);
+            int randomLevel = UnityEngine.Random.Range(0, 3);
+            BaseUnit newUnit = Instantiate(unitDatabase.allUnits[randomIndex].prefab, team2Parent);
+           
+            team1Units.Add(newUnit);
+            team1BoardUnits.Add(newUnit);
+
+            newUnit.Setup(Team.Team1, GridManager.Instance.GetRandomFreeNode(Team.Team1));
+            newUnit.isBenched = false;
+        }
+        randomLevelIATraining = randomNumbreLevel;
+
+    }
+
+    public bool isFightInProgress()
+    {
+        return gameState == GameState.Fight;
+    }
+    public void CompleteFight()
+    {
+        OnFightCompleted();
+    }
+
+    // Method to invoke the FightCompleted event
+    protected virtual void OnFightCompleted()
+    {
+        
+        // Check if there are any subscribers to the event
+        if (FightCompleted != null)
+        {
+
+            // Invoke the event, notifying subscribers
+            FightCompleted.Invoke();
+        }
+    }
 
 
 }

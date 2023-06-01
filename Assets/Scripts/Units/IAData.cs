@@ -19,7 +19,10 @@ public class IAData : Manager<IAData>
         exp = 0;
         expNeeded = 2;
     }
-
+    public void setLevel(int level)
+    {
+        this.level = level;
+    }
     public bool CanAfford(int amount)
     {
         return amount <= Money;

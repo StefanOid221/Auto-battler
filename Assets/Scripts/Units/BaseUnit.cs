@@ -77,20 +77,25 @@ public class BaseUnit : MonoBehaviour
     {
         if (!isBenched)
         {
-             
+
             if (currentTarget == null) {
                 animator.SetTrigger("Idle");
                 return;
             }
             if (!moving)
             {
+
                 destination = null;
                 List<Node> candidates = GridManager.Instance.GetNodesCloseTo(currentTarget.currentNode);
                 candidates = candidates.OrderBy(x => Vector3.Distance(x.worldPosition, this.transform.position)).ToList();
                 for (int i = 0; i < candidates.Count; i++)
                 {
+
+
                     if (!candidates[i].IsOccupied)
                     {
+
+
                         destination = candidates[i];
                         break;
                     }
@@ -99,7 +104,8 @@ public class BaseUnit : MonoBehaviour
                     animator.SetTrigger("Idle");
                     return;
                 }
-                    
+
+
 
                 var path = GridManager.Instance.GetPath(currentNode, destination);
                 if (path == null && path.Count >= 1)
@@ -112,10 +118,13 @@ public class BaseUnit : MonoBehaviour
                 destination = path[1];
             }
 
+
             moving = !MoveTowards();
 
             if (!moving)
             {
+
+
                 currentNode.SetOccupied(false);
                 currentNode = destination;
             }
@@ -139,7 +148,7 @@ public class BaseUnit : MonoBehaviour
         if (!canAttack)
             return;
 
-        this.transform.LookAt(currentTarget.transform.position);
+        this.transform.LookAt(currentTarget.currentNode.worldPosition);
         animator.SetTrigger("Attacking");
 
         waitBetweenAttack = (float)(1 / attackSpeed);
@@ -191,12 +200,16 @@ public class BaseUnit : MonoBehaviour
     }
     public void respawn()
     {
-        this.currentNode.SetOccupied(false);
-        this.gameObject.SetActive(true);
-        this.transform.position = previousFightTile.transform.position; 
-        this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
-        this.baseHealth = baseDefaulthealth;
-        this.dead = false;
+        if (this.dead)
+        {
+            this.currentNode.SetOccupied(false);
+            this.gameObject.SetActive(true);
+            this.transform.position = previousFightTile.transform.position;
+            this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
+            this.baseHealth = baseDefaulthealth;
+            this.dead = false;
+        }
+        
     }
     public void levelUp()
     {
@@ -214,6 +227,52 @@ public class BaseUnit : MonoBehaviour
         }
         if (this.level == 3)
             this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        this.transform.position = new Vector3(this.transform.position.x, 0, this.transform.position.z);
+    }
+    public void levelUpTrain()
+    {
+        this.level += 1;
+        this.baseDamage *= 1.5;
+        this.baseDefaulthealth *= 2;
+        this.baseHealth = baseDefaulthealth;
+        this.attackSpeed *= 1.2;
+        if (this.level == 2)
+        {
+            this.gameObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+        }
+        if (this.level == 3)
+            this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        this.transform.position = new Vector3(this.transform.position.x, 0, this.transform.position.z);
+    }
+        public void moveToNode ( Node spawnNode)
+    {
+        Tile spawnTile = GridManager.Instance.GetTileForNode(this.currentNode);
+        this.previousFightTile = spawnTile;
+        this.currentNode.SetOccupied(false);
+        this.currentNode = spawnNode;
+        transform.position = currentNode.worldPosition;
+        currentNode.SetOccupied(true);
+        Tile tile = GridManager.Instance.GetTileForNode(spawnNode);
+        this.isBenched = false;
+        this.moving = false;
+        if (tile.isBench)
+        {
+            this.isBenched = true;
+            if (this.myTeam == Team.Team2)
+            {
+                GameManager.Instance.team2BoardUnits.Remove(this);
+                GameManager.Instance.team2BenchUnits.Add(this);
+                GameManager.Instance.team2CopyBoardUnits.Remove(this);
+            }
+            
+        }
+        else if(!GameManager.Instance.team2BoardUnits.Contains(this))
+        {
+            GameManager.Instance.team2BoardUnits.Add(this);
+            GameManager.Instance.team2BenchUnits.Remove(this);
+
+        }
+
 
     }
 }

@@ -10,8 +10,8 @@ public class MeleeUnit : BaseUnit
 
         base.Update();
 
-        if (GameManager.Instance.gameState == GameState.Fight) 
-        { 
+        if (GameManager.Instance.gameState == GameState.Fight)
+        {
             if (!hasEnemy)
             {
                 FindTarget();
@@ -31,5 +31,7 @@ public class MeleeUnit : BaseUnit
                 GetInRange();
             }
         }
+        else if (GameManager.Instance.gameState == GameState.Decision)
+            currentTarget = null;
     }
 }
