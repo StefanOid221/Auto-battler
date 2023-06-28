@@ -7,8 +7,7 @@ public class BaseUnit : MonoBehaviour
 {
     //public GameObject gameObject;
     public Animator animator;
-    protected HealthBar healthbar;
-    public HealthBar barPrefab;
+
 
     public double baseDamage = 1;
     public int level = 1;
@@ -44,6 +43,7 @@ public class BaseUnit : MonoBehaviour
     public void Start()
     {
         animator = GetComponent<Animator>();
+        animator.SetTrigger("Idle");
         baseDefaulthealth = baseHealth;
     }
     public void Setup(Team team, Node spawnNode)
@@ -53,8 +53,7 @@ public class BaseUnit : MonoBehaviour
         transform.position = currentNode.worldPosition;
         currentNode.SetOccupied(true);
 
-        healthbar = Instantiate(barPrefab, this.transform);
-        healthbar.Setup(this.transform, baseHealth);
+
     }
     protected void FindTarget()
     {
@@ -134,7 +133,6 @@ public class BaseUnit : MonoBehaviour
     public void TakeDamage(double amount)
     {
         baseHealth -= (float)amount;
-        healthbar.UpdateBar(baseHealth);
 
         if (baseHealth <= 0 && !dead)
         {
@@ -196,7 +194,7 @@ public class BaseUnit : MonoBehaviour
 
                 FindTarget();
             }
-        } 
+        }
     }
     public void respawn()
     {
@@ -208,8 +206,9 @@ public class BaseUnit : MonoBehaviour
             this.Setup(myTeam, GridManager.Instance.GetNodeForTile(previousFightTile));
             this.baseHealth = baseDefaulthealth;
             this.dead = false;
+            animator.SetTrigger("Idle");
         }
-        
+
     }
     public void levelUp()
     {
@@ -244,7 +243,7 @@ public class BaseUnit : MonoBehaviour
             this.gameObject.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
         this.transform.position = new Vector3(this.transform.position.x, 0, this.transform.position.z);
     }
-        public void moveToNode ( Node spawnNode)
+    public void moveToNode ( Node spawnNode)
     {
         Tile spawnTile = GridManager.Instance.GetTileForNode(this.currentNode);
         this.previousFightTile = spawnTile;
@@ -258,19 +257,18 @@ public class BaseUnit : MonoBehaviour
         if (tile.isBench)
         {
             this.isBenched = true;
-            if (this.myTeam == Team.Team2)
+            if (this.myTeam == Team.Team2 &&  !GameManager.Instance.team2BenchUnits.Contains(this))
             {
                 GameManager.Instance.team2BoardUnits.Remove(this);
                 GameManager.Instance.team2BenchUnits.Add(this);
                 GameManager.Instance.team2CopyBoardUnits.Remove(this);
+                Debug.Log("añadido desde moveToNode");
             }
-            
         }
-        else if(!GameManager.Instance.team2BoardUnits.Contains(this))
+        else if (!GameManager.Instance.team2BoardUnits.Contains(this))
         {
             GameManager.Instance.team2BoardUnits.Add(this);
             GameManager.Instance.team2BenchUnits.Remove(this);
-
         }
 
 

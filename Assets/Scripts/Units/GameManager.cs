@@ -73,7 +73,7 @@ public class GameManager : Manager<GameManager>
 
                 if (stateTimer >= decisionTime)
                 {
-                    IA_Manager.Instance.buyCard();
+                    
                     //Debug.Log("buys");
                     SetState(GameState.Fight);
                     unitsFighting = true;
@@ -90,6 +90,13 @@ public class GameManager : Manager<GameManager>
                     //resetGame();
                     playerShopRef.RefreshEndRound();
 
+                    
+                    if (team1CopyBoardUnits.Count < team2CopyBoardUnits.Count)
+                        gamesWonAI += 1;
+                    else if (team1CopyBoardUnits.Count > team2CopyBoardUnits.Count) 
+                        gamesWonPlayer += 1;
+                    team1CopyBoardUnits.Clear();
+                    team2CopyBoardUnits.Clear();
                     foreach (BaseUnit unit in team1BoardUnits)
                     {
                         unit.respawn();
@@ -98,24 +105,18 @@ public class GameManager : Manager<GameManager>
                     {
                         unit.respawn();
                     }
-                    if (team1CopyBoardUnits.Count < team2BoardUnits.Count)
-                        gamesWonAI += 1;
-                    else gamesWonPlayer += 1;
-                    team1CopyBoardUnits.Clear();
-                    team2CopyBoardUnits.Clear();
                     roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
                     roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
                     PlayerData.Instance.moneyEndRound();
                     IA_Manager.Instance.shopRef.RefreshEndRound();
                     IAData.Instance.moneyEndRound();
-                    
-
+                    IA_Manager.Instance.buyCard();
 
                     CompleteFight();
                     //resetGame();
+                    correctTeam2Units();
+                    GridManager.Instance.correctNodes();
                 }
-                // DebugFight() is already called when transitioning to the Fight state,
-                // so there's no need to call it again here
                 break;
         }
 
@@ -129,9 +130,9 @@ public class GameManager : Manager<GameManager>
         stateTimer = 0f;
         if (newState == GameState.Decision)
         {
-            team1CopyBoardUnits.Clear();
-            team2CopyBoardUnits.Clear();
+            decisionTime = 10f;
         }
+        else decisionTime = 30f;
     }
 
 
@@ -143,8 +144,6 @@ public class GameManager : Manager<GameManager>
     }
     public void DebugFight()
     {
-
-        //stateTimer += Time.deltaTime;
         if (unitsFighting) {
             
             foreach (BaseUnit unit in team1BoardUnits){
@@ -154,43 +153,8 @@ public class GameManager : Manager<GameManager>
             {
                 team2CopyBoardUnits.Add(unit);
             }
-
             unitsFighting = false;
         }
-        if (stateTimer >30f || team1CopyBoardUnits.Count == 0 || team2CopyBoardUnits.Count == 0 )
-        {
-            //SetState(GameState.Decision);
-            ////resetGame();
-            ////IA_Manager.Instance.shopRef.RefreshEndRound();
-            ////playerShopRef.RefreshEndRound();
-
-            ////foreach (BaseUnit unit in team1BoardUnits)
-            ////{
-            ////    unit.respawn();
-            ////}
-            ////foreach (BaseUnit unit in team2BoardUnits)
-            ////{
-            ////    unit.respawn();
-            ////}
-            //if (team1CopyBoardUnits.Count < team2BoardUnits.Count)
-            //    gamesWonAI += 1;
-            //else gamesWonPlayer += 1;
-            //team1CopyBoardUnits.Clear();
-            //team2CopyBoardUnits.Clear();
-            //roundsPlayer.text = "Rounds won by player: " + gamesWonPlayer.ToString();
-            //roundsAi.text = "Rounds won by opponent: " + gamesWonAI.ToString();
-            //PlayerData.Instance.moneyEndRound();
-            //IAData.Instance.moneyEndRound();
-            ////IA_Manager.Instance.buyCard();
-
-            //Debug.Log("end fight");
-
-            //FightCompleted();
-            //resetGame();
-            
-        }
-
-
     }
 
     public void OnUnitBought(UnitDatabaseSO.UnitData entityData, Player player)
@@ -211,7 +175,7 @@ public class GameManager : Manager<GameManager>
             newUnit.gameObject.name = entityData.name;
             team2Units.Add(newUnit);
             team2BenchUnits.Add(newUnit);
-
+            Debug.Log("añadida desde comprar carta");
             newUnit.Setup(Team.Team2, GridManager.Instance.GetFreeShopNode(Team.Team2));
             checkLevelUp(newUnit, player);
         }
@@ -430,6 +394,55 @@ public class GameManager : Manager<GameManager>
 
             // Invoke the event, notifying subscribers
             FightCompleted.Invoke();
+        }
+    }
+
+    public void correctTeam2Units()
+    {
+        int placedUnits = 0;
+        Tile[] tiles = FindObjectsOfType<Tile>();
+        List<BaseUnit> tem_list = new List<BaseUnit>();
+
+        foreach(BaseUnit unit in team2BoardUnits)
+        {
+            if (!unit.isActiveAndEnabled)
+                tem_list.Add(unit);
+            unit.animator.SetTrigger("Idle");
+        }
+        foreach(BaseUnit u in tem_list)
+        {
+            team2BoardUnits.Remove(u);
+        }
+
+        List<Node> node_to_move = new List<Node>();
+        foreach (Tile t in tiles)
+        {
+            if (t.team == Team.Team2 && t.isBench)
+            {
+                Node node = GridManager.Instance.GetNodeForTile(t);
+                if (node.IsOccupied == false)
+                    node_to_move.Add(node);
+            }
+
+        }
+        placedUnits = GameManager.Instance.team2BoardUnits.Count;
+        if (placedUnits > IAData.Instance.level)
+        {
+            // Move exceeded units to the bench
+            int unitsToMove = placedUnits - IAData.Instance.level;
+            List<BaseUnit> temp = new List<BaseUnit>(team2BoardUnits);
+            for (int i = 0; i < unitsToMove; i++)
+            {
+                foreach (Node node in node_to_move)
+                {
+                    if (!node.IsOccupied)
+                    {
+                        temp[i].moveToNode(node);
+                        break;
+                    }
+                }
+            }
+
         }
     }
 

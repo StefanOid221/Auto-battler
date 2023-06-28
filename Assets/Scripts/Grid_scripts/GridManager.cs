@@ -66,6 +66,26 @@ public class GridManager : Manager<GridManager>
         
     }
 
+    public void correctNodes()
+    {
+        List<Node> nodes_list = new List<Node>();
+
+        foreach(BaseUnit u in GameManager.Instance.team1Units)
+        {
+            nodes_list.Add(u.CurrentNode);
+        }
+        foreach (BaseUnit u in GameManager.Instance.team2Units)
+        {
+            nodes_list.Add(u.CurrentNode);
+        }
+
+        foreach (Node nodes in graph.Nodes)
+        {
+            if (!nodes_list.Contains(nodes))
+                nodes.SetOccupied(false);
+        }
+    }
+
 
     public Node GetFreeShopNode(Team forTeam)
     {

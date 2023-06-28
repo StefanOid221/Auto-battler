@@ -24,7 +24,7 @@ public class UIShop : MonoBehaviour
         cachedDb = GameManager.Instance.unitDatabase;
         GenerateCard();
         PlayerData.Instance.OnUpdate += Refresh;
-        //Refresh();
+        //Refresh();S
         
     }
 

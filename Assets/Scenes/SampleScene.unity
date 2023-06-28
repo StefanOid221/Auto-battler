@@ -6474,7 +6474,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -16.486603}
+  m_AnchoredPosition: {x: 0, y: -16.486511}
   m_SizeDelta: {x: -1820, y: -1036.9727}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1453647565
@@ -7936,6 +7936,7 @@ GameObject:
   - component: {fileID: 1649694605}
   - component: {fileID: 1649694606}
   - component: {fileID: 1649694607}
+  - component: {fileID: 1649694608}
   m_Layer: 0
   m_Name: IAShop
   m_TagString: Untagged
@@ -8013,6 +8014,18 @@ MonoBehaviour:
   benchCountWeight: 0.3
   costWeight: 0.2
   unitStrengthWeight: 0.1
+--- !u!225 &1649694608
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649694601}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1659512221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9810,7 +9823,7 @@ MonoBehaviour:
   roundsAi: {fileID: 96437921}
   randomLevelIATraining: 0
   unitsFighting: 0
-  decisionTime: 7
+  decisionTime: 10
   gameState: 0
 --- !u!4 &2094763850
 Transform:

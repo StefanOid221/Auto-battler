@@ -16,9 +16,10 @@ public class IA_Manager : Manager<IA_Manager>
 
     public void buyCard()
     {
-        if (GameManager.Instance.team2Units.Count < 4)
+        shopRef.OnLevelUpClick();
+        if (GameManager.Instance.team2Units.Count < 7)
         {
-            shopRef.OnLevelUpClick();
+            
             //shopRef.OnCardClick(shopRef.allCards[0], shopRef.allCards[0].myData);
             //shopRef.OnCardClick(shopRef.allCards[1], shopRef.allCards[1].myData);
             DecideWhatToBuy(); 
@@ -26,19 +27,6 @@ public class IA_Manager : Manager<IA_Manager>
         
         
     }
-    public void moveUnitToNode(BaseUnit unit, Node node)
-    {
-        //TODO mover al banquillo
-        GameManager.Instance.team2BoardUnits.Add(unit);
-        GameManager.Instance.team2BenchUnits.Remove(unit);
-        unit.isBenched = false;
-        unit.CurrentNode.SetOccupied(false);
-        unit.SetCurrentNode(node);
-        node.SetOccupied(true);
-        unit.transform.position = node.worldPosition;
-        unit.previousFightTile = GridManager.Instance.GetTileForNode(node);
-    }
-
 
     public void DecideWhatToBuy()
     {

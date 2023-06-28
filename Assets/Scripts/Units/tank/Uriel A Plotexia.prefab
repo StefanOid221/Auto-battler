@@ -1225,7 +1225,6 @@ MonoBehaviour:
   releaseMask:
     serializedVersion: 2
     m_Bits: 1
-  dragOffset: {x: 0, y: -0.4, z: 0}
   IsDragging: 0
 --- !u!114 &4005668234819472363
 MonoBehaviour:

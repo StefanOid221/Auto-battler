@@ -32,12 +32,14 @@ public class IA_Agent : Agent
             Tile[] tiles = FindObjectsOfType<Tile>();
             foreach (BaseUnit unit in gameManager.team1BoardUnits)
             {
-                sensor.AddObservation(unit.transform.position);
+                if (unit != null)
+                    sensor.AddObservation(unit.transform.position);
             }
 
             foreach (BaseUnit unit in gameManager.team2BoardUnits)
             {
-                sensor.AddObservation(unit.transform.position);
+                if (unit != null)
+                    sensor.AddObservation(unit.transform.position);
             }
 
             sensor.AddObservation(IAData.Instance.level);
@@ -47,7 +49,7 @@ public class IA_Agent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         
-        if (isActionCompleted && !allMoved)
+        if (isActionCompleted && !allMoved && GameManager.Instance.gameState.Equals(GameState.Decision))
         {
             
             isActionCompleted = false;
@@ -72,7 +74,7 @@ public class IA_Agent : Agent
                 
 
             }
-            int benchUnits = gameManager.team2BoardUnits.Count;
+            int benchUnits = gameManager.team2BenchUnits.Count;
             float benchReward = benchUnits * 0.1f;
             AddReward(benchReward);
             CheckExceededUnits();
@@ -140,12 +142,7 @@ public class IA_Agent : Agent
             }
                
         }
-        foreach (BaseUnit unit in gameManager.team2BoardUnits)
-        {
-            placedUnits++;
-
-        }
-
+        placedUnits = GameManager.Instance.team2BoardUnits.Count;
         if (placedUnits > IAData.Instance.level)
         {
             // Move exceeded units to the bench
@@ -153,11 +150,19 @@ public class IA_Agent : Agent
             List<BaseUnit> temp = new List<BaseUnit>(gameManager.team2BoardUnits);
             for (int i = 0; i < unitsToMove; i++)
             {
-                
-                temp[i].moveToNode(node_to_move[i]);
-                AddReward(-0.2f);
+                foreach (Node node in node_to_move)
+                {
+                    if (!node.IsOccupied)
+                    {
+                        temp[i].moveToNode(node);
+                        AddReward(-0.2f);
+                        break;
+                    }
+                }
             }
+
         }
+
     }
 
 

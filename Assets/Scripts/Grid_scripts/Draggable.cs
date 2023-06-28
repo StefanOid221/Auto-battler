@@ -6,7 +6,7 @@ using UnityEngine;
 public class Draggable : MonoBehaviour
 {
     public LayerMask releaseMask;
-    public Vector3 dragOffset = new Vector3(0, -0.4f, 0);
+    
 
     private Camera cam;
 
@@ -52,19 +52,9 @@ public class Draggable : MonoBehaviour
         Tile tileUnder = GetTileUnder();
         if (tileUnder != null)
         {
-            tileUnder.SetHighlight(true, !GridManager.Instance.GetNodeForTile(tileUnder).IsOccupied);
-
-            if (previousTile != null && tileUnder != previousTile)
-            {
-                //We are over a different tile.
-                previousTile.SetHighlight(false, false);
-            }
-
-            
             Vector3 newPosition = tileUnder.transform.position;
             this.transform.position = newPosition;
             actualTile = tileUnder;
-
         }
         
     }
