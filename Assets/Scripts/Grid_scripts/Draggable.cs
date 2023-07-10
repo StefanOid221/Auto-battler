@@ -29,7 +29,6 @@ public class Draggable : MonoBehaviour
         previousTile = actualTile;
 
     }
-
     public void OnStartDrag()
     {
         if(GameManager.Instance.gameState != GameState.Fight) {
@@ -40,12 +39,9 @@ public class Draggable : MonoBehaviour
             IsDragging = true;
 
         }
-        
-    }
-
+            }
     public void OnDragging()
     {
-        //Debug.Log("2");
         if (!IsDragging || GameManager.Instance.gameState == GameState.Fight)
             return;
 
@@ -58,29 +54,22 @@ public class Draggable : MonoBehaviour
         }
         
     }
-
     public void OnEndDrag()
     {
         if (!IsDragging || GameManager.Instance.gameState == GameState.Fight)
             return;
-
-
-
         if (!TryRelease())
         {
             //Nothing was found, return to original position.
             this.transform.position = oldPosition;
             actualTile = previousTile;
         }
-
         if (previousTile != null)
         {
             previousTile.SetHighlight(false, false);
             previousTile = null;
         }
-
         Renderer.sortingOrder = oldSortingOrder;
-
         IsDragging = false;
     }
 
@@ -92,15 +81,12 @@ public class Draggable : MonoBehaviour
             Node candidateNode = GridManager.Instance.GetNodeForTile(actualTile);
             if (candidateNode != null && thisUnit != null)  
             {
-
                 if (!candidateNode.IsOccupied && actualTile.team == previousTile.team)
                 {
-
                     if (previousTile.isBench && !actualTile.isBench)
                     {
                         if (GameManager.Instance.team1BoardUnits.Count < PlayerData.Instance.level && GameManager.Instance.gameState == GameState.Decision)
                         {
-
                             GameManager.Instance.removeAtTile(candidateNode);
                             thisUnit.isBenched = false;
                             thisUnit.previousFightTile = actualTile;
@@ -122,7 +108,6 @@ public class Draggable : MonoBehaviour
                     }
                     if (actualTile.isBench && previousTile.isBench)
                     {
-
                         moveUnit(thisUnit, candidateNode);
                         return true;
                     }
@@ -130,9 +115,7 @@ public class Draggable : MonoBehaviour
                     {
                         moveUnit(thisUnit, candidateNode);
                         thisUnit.previousFightTile = actualTile;
-                    }
-                        
-
+                    }       
                     previousTile = actualTile;
                     return true;
                 }
@@ -147,22 +130,17 @@ public class Draggable : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, releaseMask))
         {
-            // Get the exact point on the board where the ray intersects
             Vector3 pointOnBoard = hit.point;
-
-            // Find the tile that contains the point
             Tile[] tiles = FindObjectsOfType<Tile>();
             foreach (Tile tile in tiles)
             {
                 Collider tileCollider = tile.GetComponent<Collider>();
                 if (tileCollider.bounds.Contains(pointOnBoard))
                 {
-
                     return tile;
                 }
             }
         }
-
         return null;
     }
     public void moveUnit(BaseUnit unit, Node node)

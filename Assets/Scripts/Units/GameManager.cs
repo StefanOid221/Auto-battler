@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Manager<GameManager>
 {
@@ -38,8 +39,6 @@ public class GameManager : Manager<GameManager>
 
     public delegate void FightCompletedEventHandler();
     public int randomLevelIATraining;
-
-    // Declare the event
     public event FightCompletedEventHandler FightCompleted;
 
     public bool unitsFighting = false;
@@ -73,11 +72,9 @@ public class GameManager : Manager<GameManager>
 
                 if (stateTimer >= decisionTime)
                 {
-                    
-                    //Debug.Log("buys");
                     SetState(GameState.Fight);
                     unitsFighting = true;
-                    DebugFight(); // Call DebugFight() once when transitioning to the Fight state
+                    DebugFight();
                 }
                 break;
 
@@ -87,14 +84,20 @@ public class GameManager : Manager<GameManager>
                 if (stateTimer > 30f || team1CopyBoardUnits.Count == 0 || team2CopyBoardUnits.Count == 0)
                 {
                     SetState(GameState.Decision);
-                    //resetGame();
                     playerShopRef.RefreshEndRound();
-
-                    
                     if (team1CopyBoardUnits.Count < team2CopyBoardUnits.Count)
                         gamesWonAI += 1;
                     else if (team1CopyBoardUnits.Count > team2CopyBoardUnits.Count) 
                         gamesWonPlayer += 1;
+                    else
+                    {
+                        gamesWonAI += 1;
+                        gamesWonPlayer += 1;
+                    }
+                    if (gamesWonPlayer == 10 || gamesWonAI == 10)
+                    {
+                        SceneManager.LoadScene("MainMenu");
+                    }
                     team1CopyBoardUnits.Clear();
                     team2CopyBoardUnits.Clear();
                     foreach (BaseUnit unit in team1BoardUnits)
@@ -113,16 +116,13 @@ public class GameManager : Manager<GameManager>
                     IA_Manager.Instance.buyCard();
 
                     CompleteFight();
-                    //resetGame();
                     correctTeam2Units();
                     GridManager.Instance.correctNodes();
                 }
                 break;
         }
-
         time.text = "Time: " + Mathf.RoundToInt(decisionTime - stateTimer).ToString();
     }
-
 
     void SetState(GameState newState)
     {
@@ -134,7 +134,6 @@ public class GameManager : Manager<GameManager>
         }
         else decisionTime = 30f;
     }
-
 
     public List<BaseUnit> GetUnitsAgainst(Team otherTeam)
     {
@@ -178,8 +177,7 @@ public class GameManager : Manager<GameManager>
             Debug.Log("añadida desde comprar carta");
             newUnit.Setup(Team.Team2, GridManager.Instance.GetFreeShopNode(Team.Team2));
             checkLevelUp(newUnit, player);
-        }
-        
+        }        
     }
 
     public void UnitDead(BaseUnit unit)
@@ -208,7 +206,6 @@ public class GameManager : Manager<GameManager>
             team1BenchUnits.Remove(unit);
         }
     }
-
     public void checkLevelUp(BaseUnit unit, Player player)
     {
         List<BaseUnit> unitsToRemove = new List<BaseUnit>();
@@ -331,7 +328,6 @@ public class GameManager : Manager<GameManager>
 
         spawnRandom();
     }
-
     public void spawnRandom()
     {
         System.Random random = new System.Random();
@@ -374,7 +370,6 @@ public class GameManager : Manager<GameManager>
         randomLevelIATraining = randomNumbreLevel;
 
     }
-
     public bool isFightInProgress()
     {
         return gameState == GameState.Fight;
@@ -384,15 +379,10 @@ public class GameManager : Manager<GameManager>
         OnFightCompleted();
     }
 
-    // Method to invoke the FightCompleted event
     protected virtual void OnFightCompleted()
     {
-        
-        // Check if there are any subscribers to the event
         if (FightCompleted != null)
         {
-
-            // Invoke the event, notifying subscribers
             FightCompleted.Invoke();
         }
     }
@@ -445,8 +435,6 @@ public class GameManager : Manager<GameManager>
 
         }
     }
-
-
 }
 
 public enum Team

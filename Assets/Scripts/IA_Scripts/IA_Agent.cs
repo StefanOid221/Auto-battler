@@ -139,8 +139,7 @@ public class IA_Agent : Agent
                 Node node = gridManager.GetNodeForTile(t);
                 if (node.IsOccupied == false)
                     node_to_move.Add(node);
-            }
-               
+            }               
         }
         placedUnits = GameManager.Instance.team2BoardUnits.Count;
         if (placedUnits > IAData.Instance.level)
@@ -160,10 +159,6 @@ public class IA_Agent : Agent
                     }
                 }
             }
-
         }
-
     }
-
-
 }
