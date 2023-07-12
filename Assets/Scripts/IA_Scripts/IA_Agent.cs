@@ -154,6 +154,7 @@ public class IA_Agent : Agent
                     if (!node.IsOccupied)
                     {
                         temp[i].moveToNode(node);
+                        temp[i].isBenched = true;
                         AddReward(-0.2f);
                         break;
                     }

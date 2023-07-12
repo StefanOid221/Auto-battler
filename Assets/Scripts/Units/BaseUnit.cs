@@ -198,8 +198,8 @@ public class BaseUnit : MonoBehaviour
     }
     public void respawn()
     {
-        if (this.dead)
-        {
+        //if (this.dead)
+        //{
             this.currentNode.SetOccupied(false);
             this.gameObject.SetActive(true);
             this.transform.position = previousFightTile.transform.position;
@@ -207,7 +207,7 @@ public class BaseUnit : MonoBehaviour
             this.baseHealth = baseDefaulthealth;
             this.dead = false;
             animator.SetTrigger("Idle");
-        }
+        //}
 
     }
     public void levelUp()
@@ -270,7 +270,6 @@ public class BaseUnit : MonoBehaviour
             GameManager.Instance.team2BoardUnits.Add(this);
             GameManager.Instance.team2BenchUnits.Remove(this);
         }
-
 
     }
 }

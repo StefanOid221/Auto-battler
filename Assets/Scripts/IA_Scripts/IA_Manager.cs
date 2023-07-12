@@ -17,7 +17,7 @@ public class IA_Manager : Manager<IA_Manager>
     public void buyCard()
     {
         shopRef.OnLevelUpClick();
-        if (GameManager.Instance.team2Units.Count < 7)
+        if (GameManager.Instance.team2Units.Count < 5)
         {
             
             //shopRef.OnCardClick(shopRef.allCards[0], shopRef.allCards[0].myData);

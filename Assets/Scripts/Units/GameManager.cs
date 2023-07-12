@@ -31,6 +31,7 @@ public class GameManager : Manager<GameManager>
 
     public GameObject playerShop;
     public UIShop playerShopRef;
+    public bool checkTeam2Units = false;
 
     public Text time;
     public Text state;
@@ -69,9 +70,20 @@ public class GameManager : Manager<GameManager>
                 state.text = "Decision round";
                 stateTimer += Time.deltaTime;
                 
+                if (stateTimer < decisionTime/2)
+                {
+                    if (checkTeam2Units)
+                    {
+                        Debug.Log("se hace en dec");
+                        correctTeam2Units();
+                    }
+                        
+                }
 
                 if (stateTimer >= decisionTime)
                 {
+
+                    
                     SetState(GameState.Fight);
                     unitsFighting = true;
                     DebugFight();
@@ -85,9 +97,9 @@ public class GameManager : Manager<GameManager>
                 {
                     SetState(GameState.Decision);
                     playerShopRef.RefreshEndRound();
-                    if (team1CopyBoardUnits.Count < team2CopyBoardUnits.Count)
+                    if (team1CopyBoardUnits.Count < team2CopyBoardUnits.Count || team1BoardUnits.Count == 0)
                         gamesWonAI += 1;
-                    else if (team1CopyBoardUnits.Count > team2CopyBoardUnits.Count) 
+                    else if (team1CopyBoardUnits.Count > team2CopyBoardUnits.Count ||  team2BoardUnits.Count == 0) 
                         gamesWonPlayer += 1;
                     else
                     {
@@ -117,6 +129,7 @@ public class GameManager : Manager<GameManager>
 
                     CompleteFight();
                     correctTeam2Units();
+                    checkTeam2Units = true;
                     GridManager.Instance.correctNodes();
                 }
                 break;
@@ -174,7 +187,6 @@ public class GameManager : Manager<GameManager>
             newUnit.gameObject.name = entityData.name;
             team2Units.Add(newUnit);
             team2BenchUnits.Add(newUnit);
-            Debug.Log("añadida desde comprar carta");
             newUnit.Setup(Team.Team2, GridManager.Instance.GetFreeShopNode(Team.Team2));
             checkLevelUp(newUnit, player);
         }        
@@ -391,50 +403,95 @@ public class GameManager : Manager<GameManager>
     {
         int placedUnits = 0;
         Tile[] tiles = FindObjectsOfType<Tile>();
-        List<BaseUnit> tem_list = new List<BaseUnit>();
+        List<BaseUnit> temp_list = new List<BaseUnit>();
 
-        foreach(BaseUnit unit in team2BoardUnits)
+        foreach (BaseUnit unit in team2BoardUnits)
         {
-            if (!unit.isActiveAndEnabled)
-                tem_list.Add(unit);
-            unit.animator.SetTrigger("Idle");
+            Tile tile_temp = GridManager.Instance.GetTileForNode(unit.CurrentNode);
+            if (!unit.gameObject.activeSelf || tile_temp.isBench)
+            {
+                temp_list.Add(unit);
+            }
+            else
+            {
+                unit.animator.SetTrigger("Idle");
+            }
         }
-        foreach(BaseUnit u in tem_list)
+
+        foreach (BaseUnit u in temp_list)
         {
             team2BoardUnits.Remove(u);
         }
 
-        List<Node> node_to_move = new List<Node>();
+        List<Node> nodesToMoveBench = new List<Node>();
+        List<Node> nodesToMoveBoard = new List<Node>();
+
+        foreach (BaseUnit unit2 in team2Units)
+        {
+            if (unit2.previousFightTile != null && unit2.previousFightTile.isBench)
+            {
+                unit2.isBenched = true;
+                unit2.moving = false;
+            }
+                
+        }
         foreach (Tile t in tiles)
         {
             if (t.team == Team.Team2 && t.isBench)
             {
                 Node node = GridManager.Instance.GetNodeForTile(t);
-                if (node.IsOccupied == false)
-                    node_to_move.Add(node);
+                if (!node.IsOccupied)
+                {
+                    nodesToMoveBench.Add(node);
+                }
             }
-
+            else if (t.team == Team.Team2 && !t.isBench)
+            {
+                Node node = GridManager.Instance.GetNodeForTile(t);
+                if (!node.IsOccupied)
+                {
+                    nodesToMoveBoard.Add(node);
+                }
+            }
         }
-        placedUnits = GameManager.Instance.team2BoardUnits.Count;
+
+        placedUnits = team2BoardUnits.Count;
         if (placedUnits > IAData.Instance.level)
         {
             // Move exceeded units to the bench
             int unitsToMove = placedUnits - IAData.Instance.level;
-            List<BaseUnit> temp = new List<BaseUnit>(team2BoardUnits);
+            List<BaseUnit> tempUnits = new List<BaseUnit>(team2BoardUnits);
+
             for (int i = 0; i < unitsToMove; i++)
             {
-                foreach (Node node in node_to_move)
+                if (i < tempUnits.Count && i < nodesToMoveBench.Count)
                 {
-                    if (!node.IsOccupied)
-                    {
-                        temp[i].moveToNode(node);
-                        break;
-                    }
+                    BaseUnit unit = tempUnits[i];
+                    Node targetNode = nodesToMoveBench[i];
+                    unit.moveToNode(targetNode);
+                }
+                Debug.Log("benched");
+            }
+        }
+        else if (placedUnits < IAData.Instance.level)
+        {
+            int unitsToMove = IAData.Instance.level - placedUnits;
+            List<BaseUnit> tempUnits = new List<BaseUnit>(team2BenchUnits);
+
+            for (int i = 0; i < unitsToMove; i++)
+            {
+                if (i < tempUnits.Count && i < nodesToMoveBoard.Count)
+                {
+                    BaseUnit unit = tempUnits[i];
+                    Node targetNode = nodesToMoveBoard[i];
+                    unit.moveToNode(targetNode);
                 }
             }
-
         }
+
+        checkTeam2Units = false;
     }
+
 }
 
 public enum Team
