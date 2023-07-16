@@ -69,15 +69,15 @@ public class GameManager : Manager<GameManager>
             case GameState.Decision:
                 state.text = "Decision round";
                 stateTimer += Time.deltaTime;
-                
-                if (stateTimer < decisionTime/2)
+
+                if (stateTimer < decisionTime / 2)
                 {
                     if (checkTeam2Units)
                     {
                         Debug.Log("se hace en dec");
                         correctTeam2Units();
                     }
-                        
+
                 }
 
                 if (stateTimer >= decisionTime)
@@ -158,6 +158,7 @@ public class GameManager : Manager<GameManager>
     {
         if (unitsFighting) {
             
+
             foreach (BaseUnit unit in team1BoardUnits){
                 team1CopyBoardUnits.Add(unit);
             }
@@ -245,6 +246,7 @@ public class GameManager : Manager<GameManager>
                 {
                     team1Units.Remove(un);
                     team1BenchUnits.Remove(un);
+                    team1BoardUnits.Remove(un);
                     un.CurrentNode.SetOccupied(false);
                     Destroy(un.gameObject);
                 }
@@ -261,6 +263,8 @@ public class GameManager : Manager<GameManager>
                     }
                 }
             }
+
+
         }
         else if (player == Player.IA_Player)
         {
@@ -412,10 +416,10 @@ public class GameManager : Manager<GameManager>
             {
                 temp_list.Add(unit);
             }
-            else
-            {
-                unit.animator.SetTrigger("Idle");
-            }
+            //else
+            //{
+            //    unit.animator.SetTrigger("Idle");
+            //}
         }
 
         foreach (BaseUnit u in temp_list)
@@ -485,9 +489,15 @@ public class GameManager : Manager<GameManager>
                     BaseUnit unit = tempUnits[i];
                     Node targetNode = nodesToMoveBoard[i];
                     unit.moveToNode(targetNode);
+                    unit.isBenched = false;
                 }
             }
         }
+        foreach(BaseUnit u in team2BoardUnits)
+        {
+            u.isBenched = false;
+        }
+
 
         checkTeam2Units = false;
     }

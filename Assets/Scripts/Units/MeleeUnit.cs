@@ -10,7 +10,7 @@ public class MeleeUnit : BaseUnit
 
         base.Update();
 
-        if (GameManager.Instance.gameState == GameState.Fight)
+        if (GameManager.Instance.gameState == GameState.Fight && this.isBenched == false)
         {
             if (!hasEnemy)
             {
