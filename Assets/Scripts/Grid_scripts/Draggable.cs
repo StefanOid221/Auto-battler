@@ -66,7 +66,6 @@ public class Draggable : MonoBehaviour
         }
         if (previousTile != null)
         {
-            previousTile.SetHighlight(false, false);
             previousTile = null;
         }
         Renderer.sortingOrder = oldSortingOrder;
